@@ -12,50 +12,54 @@
 </head>
 <body>
     <div class="container">
-        <div class="kpi-grid-container courier-summary" style="grid-template-columns: repeat(4, 1fr);">
-            <div class="kpi-card">
-                <div class="card-header">PRIORITY</div>
-                <div id="summary_pri" class="card-body"></div>
+        
+        <div id="capture-this-area">
+            <div class="kpi-grid-container courier-summary" style="grid-template-columns: repeat(4, 1fr);">
+                <div class="kpi-card">
+                    <div class="card-header">PRIORITY</div>
+                    <div id="summary_pri" class="card-body"></div>
+                </div>
+                <div class="kpi-card">
+                    <div class="card-header">TIKTOK</div>
+                    <div id="summary_tt" class="card-body"></div>
+                </div>
+                <div class="kpi-card">
+                    <div class="card-header">ALL</div>
+                    <div id="summary_all" class="card-body"></div>
+                </div>
+                <div class="kpi-card">
+                    <div class="card-header">พัสดุติดปัญหา</div>
+                    <div id="summary_problem" class="card-body"></div>
+                </div>
             </div>
-            <div class="kpi-card">
-                <div class="card-header">TIKTOK</div>
-                <div id="summary_tt" class="card-body"></div>
-            </div>
-            <div class="kpi-card">
-                <div class="card-header">ALL</div>
-                <div id="summary_all" class="card-body"></div>
-            </div>
-            <div class="kpi-card">
-                <div class="card-header">พัสดุติดปัญหา</div>
-                <div id="summary_problem" class="card-body"></div>
+
+            <div id="dashboard-content-to-export" style="margin-top: 20px;">
+                <div class="kpi-header-info">
+                    <span id="processTimeDisplay" style="float: right; font-size: 0.9em;"></span>
+                    <h2>ตารางสรุป KPI COURIER</h2>
+                </div>
+                <div class="table-container courier-table-container" style="max-height: none; overflow-x: visible;">
+                    <table id="courierKpiTable">
+                        <thead>
+                            <tr>
+                                <th>รหัสพนักงาน</th>
+                                <th>ชื่อ</th>
+                                <th>เวลาเข้างาน</th>
+                                <th>ประเภทพัสดุ</th>
+                                <th>สแกนส่งมอบ</th>
+                                <th>ยืนยันส่งมอบ</th>
+                                <th>อัตราปิดงาน</th>
+                                <th>พัสดุติดปัญหา</th>
+                                <th>ต้องปิดงานเพิ่ม</th>
+                                <th>เกรด</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kpiTableBody"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <div id="dashboard-content-to-export" style="margin-top: 20px;">
-            <div class="kpi-header-info">
-                <span id="processTimeDisplay" style="float: right; font-size: 0.9em;"></span>
-                <h2>ตารางสรุป KPI COURIER</h2>
-            </div>
-            <div class="table-container courier-table-container" style="max-height: none; overflow-x: visible;">
-                <table id="courierKpiTable">
-                    <thead>
-                        <tr>
-                            <th>รหัสพนักงาน</th>
-                            <th>ชื่อ</th>
-                            <th>เวลาเข้างาน</th>
-                            <th>ประเภทพัสดุ</th>
-                            <th>สแกนส่งมอบ</th>
-                            <th>ยืนยันส่งมอบ</th>
-                            <th>อัตราปิดงาน</th>
-                            <th>พัสดุติดปัญหา</th>
-                            <th>ต้องปิดงานเพิ่ม</th>
-                            <th>เกรด</th>
-                        </tr>
-                    </thead>
-                    <tbody id="kpiTableBody"></tbody>
-                </table>
-            </div>
-        </div>
         <div class="kpi-actions">
             <button id="exportImageButton">บันทึกเป็นรูปภาพ</button>
         </div>
