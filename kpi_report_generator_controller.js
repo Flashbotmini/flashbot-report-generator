@@ -29,6 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function renderSummaryCards(summary) {
+        if (!summary) return;
+        document.getElementById('summary_pri').innerHTML = `<b>Scanned:</b> ${summary.PRI.scanned}<br><b>Closed:</b> ${summary.PRI.closed}<br><b>Avg Rate:</b> ${summary.PRI.avgRate.toFixed(2)}%`;
+        document.getElementById('summary_tt').innerHTML = `<b>Scanned:</b> ${summary.TT.scanned}<br><b>Closed:</b> ${summary.TT.closed}<br><b>Avg Rate:</b> ${summary.TT.avgRate.toFixed(2)}%`;
+        document.getElementById('summary_all').innerHTML = `<b>Scanned:</b> ${summary.ALL.scanned}<br><b>Closed:</b> ${summary.ALL.closed}<br><b>Avg Rate:</b> ${summary.ALL.avgRate.toFixed(2)}%`;
+        document.getElementById('summary_problem').innerHTML = `<span class="problem-total">${summary.problem}</span>`;
+    }
+
     function getTasksColorClass(value) {
         if (value <= 0) return 'tasks-green';
         if (value <= 10) return 'tasks-orange';
@@ -48,14 +56,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function exportDashboardAsImage() {
-        const dashboardElement = document.getElementById('dashboard-content-to-export');
-        if (!dashboardElement) return;
+        // --- [FIXED] เปลี่ยนเป้าหมายการถ่ายภาพเป็น div ใหม่ ---
+        const captureElement = document.getElementById('capture-this-area');
+        if (!captureElement) return;
 
         exportImageButton.textContent = 'กำลังสร้างรูปภาพ...';
         exportImageButton.disabled = true;
 
         try {
-            const canvas = await html2canvas(dashboardElement, {
+            const canvas = await html2canvas(captureElement, {
                 scale: 2,
                 useCORS: true,
                 allowTaint: true
@@ -72,16 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
             exportImageButton.style.backgroundColor = '#27ae60';
         }
     }
-     // --- [NEW] ฟังก์ชันสำหรับแสดงข้อมูลบนการ์ด ---
-    function renderSummaryCards(summary) {
-        if (!summary) return;
-        document.getElementById('summary_pri').innerHTML = `<b>Scanned:</b> ${summary.PRI.scanned}<br><b>Closed:</b> ${summary.PRI.closed}<br><b>Avg Rate:</b> ${summary.PRI.avgRate.toFixed(2)}%`;
-        document.getElementById('summary_tt').innerHTML = `<b>Scanned:</b> ${summary.TT.scanned}<br><b>Closed:</b> ${summary.TT.closed}<br><b>Avg Rate:</b> ${summary.TT.avgRate.toFixed(2)}%`;
-        document.getElementById('summary_all').innerHTML = `<b>Scanned:</b> ${summary.ALL.scanned}<br><b>Closed:</b> ${summary.ALL.closed}<br><b>Avg Rate:</b> ${summary.ALL.avgRate.toFixed(2)}%`;
-        document.getElementById('summary_problem').innerHTML = `<span class="problem-total">${summary.problem}</span>`;
-    }
 
-    // --- Main Logic ---
     const urlParams = new URLSearchParams(window.location.search);
     const dataParam = urlParams.get('data');
     if (dataParam) {
@@ -90,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const decodedData = JSON.parse(jsonString);
             
             processTimeDisplay.textContent = `วันที่ประมวลผล: ${decodedData.processTime}`;
-            // --- [MODIFIED] เรียกใช้ฟังก์ชัน renderSummaryCards ---
             renderSummaryCards(decodedData.summaryData); 
             renderTable(decodedData.tableData);
         } catch (e) {
@@ -102,5 +101,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     exportImageButton.addEventListener('click', exportDashboardAsImage);
-
 });
