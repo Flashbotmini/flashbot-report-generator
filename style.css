@@ -262,17 +262,17 @@ h1 {
 }
 
 .grade-badge.grade-a {
-    background-color: #358003;
+    background-color: #4caf0a;
 }
 
 .grade-badge.grade-b {
-    background-color: #8fdc8a;
-    color: #333;
+    background-color: #7fe03e;
+    color: #000000;
 }
 
 .grade-badge.grade-c {
     background-color: #ffd600;
-    color: #333;
+    color: #000000;
 }
 
 .grade-badge.grade-d {
@@ -280,7 +280,7 @@ h1 {
 }
 
 .grade-badge.grade-f {
-    background-color: #f5365c;
+    background-color: #ff0000;
 }
 
 .kpi-actions {
