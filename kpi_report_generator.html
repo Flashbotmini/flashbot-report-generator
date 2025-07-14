@@ -4,29 +4,21 @@
     <meta charset="UTF-8">
     <title>KPI Courier Report</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        body { width: auto; background-color: #f8f9fa; padding: 20px; }
-        .container { max-width: 1200px; margin: auto; }
-        .kpi-actions { text-align: center; margin: 20px 0; }
-    </style>
 </head>
 <body>
-    <div class="container">
+    <div class="report-container">
         <div id="report-content">
-            <h1>KPI COURIER REPORT</h1>
+            <h1>KPI COURIER SCORECARD</h1>
             <div class="kpi-header-info" style="text-align: right; border-bottom: none;">
-                <span id="processTimeDisplay" style="font-size: 1.1em; color: #525f7f;"></span>
+                <span id="processTimeDisplay"></span>
             </div>
-            
             <div id="kpiResultContainer" class="kpi-card-view-container">
                 </div>
         </div>
-
         <div class="kpi-actions">
             <button id="exportImageButton">บันทึกเป็นรูปภาพ</button>
         </div>
     </div>
-
     <script src="html2canvas.min.js"></script>
     <script src="kpi_report_generator_controller.js"></script>
 </body>
