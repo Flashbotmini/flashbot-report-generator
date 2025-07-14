@@ -5,41 +5,40 @@
     <title>KPI Courier Report Generator</title>
     <link rel="stylesheet" href="style.css"> 
     <style>
-        /* สไตล์เพิ่มเติมสำหรับหน้าเว็บโดยเฉพาะ */
-        body { width: auto; background-color: #f4f6f8; padding: 20px; }
-        .container { max-width: 95%; margin: auto; }
-        .kpi-actions { text-align: center; margin-top: 20px; }
-        #report-content { background-color: #f4f6f8; padding: 1px; } /* เพิ่ม padding เล็กน้อยเพื่อให้แน่ใจว่าขอบไม่ถูกตัด */
+        body { width: auto; background-color: #f8f9fa; padding: 20px; }
+        /* ไม่จำเป็นต้องใช้สไตล์เพิ่มเติมที่นี่แล้ว */
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="report-container">
         
-        <div id="report-content">
-            <div class="kpi-grid-container courier-summary">
-                <div class="kpi-card">
-                    <div class="card-header">PRIORITY</div>
-                    <div id="summary_pri" class="card-body"></div>
-                </div>
-                <div class="kpi-card">
-                    <div class="card-header">TIKTOK</div>
-                    <div id="summary_tt" class="card-body"></div>
-                </div>
-                <div class="kpi-card">
-                    <div class="card-header">ALL</div>
-                    <div id="summary_all" class="card-body"></div>
-                </div>
-                <div class="kpi-card">
-                    <div class="card-header">พัสดุติดปัญหา</div>
-                    <div id="summary_problem" class="card-body"></div>
-                </div>
-            </div>
+        <h1>KPI COURIER</h1>
 
-            <div class="kpi-header-info" style="margin-top: 20px;">
-                <span id="processTimeDisplay" style="float: right; font-size: 0.9em;"></span>
-                <h2>ตารางสรุป KPI COURIER</h2>
+        <div class="kpi-grid-container courier-summary">
+            <div class="kpi-card" id="summary_pri_card">
+                <div class="card-header">PRIORITY</div>
+                <div id="summary_pri" class="card-body"></div>
             </div>
-            <div class="table-container courier-table-container" style="max-height: none; overflow-x: visible;">
+            <div class="kpi-card" id="summary_tt_card">
+                <div class="card-header">TIKTOK</div>
+                <div id="summary_tt" class="card-body"></div>
+            </div>
+            <div class="kpi-card" id="summary_all_card">
+                <div class="card-header">ALL</div>
+                <div id="summary_all" class="card-body"></div>
+            </div>
+            <div class="kpi-card" id="summary_problem_card">
+                <div class="card-header">พัสดุติดปัญหา</div>
+                <div id="summary_problem" class="card-body"></div>
+            </div>
+        </div>
+
+        <div id="report-content">
+            <div class="kpi-header-info">
+                <span id="processTimeDisplay" style="float: right; font-size: 0.9em;"></span>
+                <h2>ตารางสรุปผล</h2>
+            </div>
+            <div class="table-container courier-table-container">
                 <table id="courierKpiTable">
                     <thead>
                         <tr>
