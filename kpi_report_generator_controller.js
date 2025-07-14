@@ -1,42 +1,66 @@
 // kpi_report_generator_controller.js
 document.addEventListener('DOMContentLoaded', () => {
 
-    const kpiTableBody = document.getElementById('kpiTableBody');
     const exportImageButton = document.getElementById('exportImageButton');
     const processTimeDisplay = document.getElementById('processTimeDisplay');
+    const kpiResultContainer = document.getElementById('kpiResultContainer');
 
-    // --- [FIXED] - ลบฟังก์ชัน initializePage ที่เรียกใช้ chrome.storage.local ออกทั้งหมด ---
+    function renderCards(data) {
+        if (!kpiResultContainer || !data) return;
+        kpiResultContainer.innerHTML = '';
 
-    function renderTable(data) {
-        if (!kpiTableBody || !data) return;
-        kpiTableBody.innerHTML = '';
+        if (data.length === 0) {
+            kpiResultContainer.innerHTML = '<p>ไม่พบข้อมูลสำหรับแสดงผล</p>';
+            return;
+        }
+
         data.forEach((emp) => {
-            emp.types.forEach((typeData, typeIndex) => {
-                const row = kpiTableBody.insertRow();
-                if (typeIndex === 0) {
-                    row.innerHTML += `<td rowspan="3" class="cell-center">${emp.id}</td>`;
-                    row.innerHTML += `<td rowspan="3" class="cell-center">${emp.name}</td>`;
-                    row.innerHTML += `<td rowspan="3" class="cell-center">${emp.loginTime}</td>`;
-                }
-                row.innerHTML += `<td>${typeData.type}</td>`;
-                row.innerHTML += `<td>${typeData.scanned}</td>`;
-                row.innerHTML += `<td>${typeData.closed}</td>`;
-                row.innerHTML += `<td>${typeData.rate}</td>`;
-                if (typeIndex === 0) {
-                    row.innerHTML += `<td rowspan="3" class="cell-center">${emp.problemParcels}</td>`;
-                    row.innerHTML += `<td rowspan="3" class="cell-center"><span class="tasks-add ${getTasksColorClass(emp.tasksToAdd)}">${emp.tasksToAdd}</span></td>`;
-                    row.innerHTML += `<td rowspan="3" class="cell-center grade-cell ${getGradeColorClass(emp.grade)}">${emp.grade}</td>`;
-                }
-            });
-        });
-    }
+            const card = document.createElement('div');
+            card.className = 'employee-scorecard';
+            
+            const allData = emp.types.find(t => t.type === 'รวมทั้งหมด') || { rate: '0%' };
+            const allRate = parseFloat(allData.rate.replace('%', ''));
+            const gradeClass = getGradeColorClass(emp.grade);
 
-    function renderSummaryCards(summary) {
-        if (!summary) return;
-        document.getElementById('summary_pri').innerHTML = `<b>Scanned:</b> ${summary.PRI.scanned}<br><b>Closed:</b> ${summary.PRI.closed}<br><b>Avg Rate:</b> ${summary.PRI.avgRate.toFixed(2)}%`;
-        document.getElementById('summary_tt').innerHTML = `<b>Scanned:</b> ${summary.TT.scanned}<br><b>Closed:</b> ${summary.TT.closed}<br><b>Avg Rate:</b> ${summary.TT.avgRate.toFixed(2)}%`;
-        document.getElementById('summary_all').innerHTML = `<b>Scanned:</b> ${summary.ALL.scanned}<br><b>Closed:</b> ${summary.ALL.closed}<br><b>Avg Rate:</b> ${summary.ALL.avgRate.toFixed(2)}%`;
-        document.getElementById('summary_problem').innerHTML = `<span class="problem-total">${summary.problem}</span>`;
+            card.innerHTML = `
+                <div class="scorecard-header">
+                    <div class="employee-info">
+                        <h3>${emp.name}</h3>
+                        <p>ID: ${emp.id} | Login: ${emp.loginTime}</p>
+                    </div>
+                    <div class="grade-badge ${gradeClass}">${emp.grade}</div>
+                </div>
+                <div class="scorecard-body">
+                    <div class="kpi-gauge ${gradeClass}" style="--p:${allRate.toFixed(1)};"></div>
+                    <div class="kpi-stats">
+                        <div class="stat-item">
+                            <span class="label">พัสดุติดปัญหา</span>
+                            <span class="value problem-value">${emp.problemParcels}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">ต้องปิดงานเพิ่ม</span>
+                            <span class="value tasks-add ${getTasksColorClass(emp.tasksToAdd)}">${emp.tasksToAdd}</span>
+                        </div>
+                    </div>
+                </div>
+                <table class="scorecard-table">
+                    <thead>
+                        <tr><th>ประเภท</th><th>สแกน</th><th>ปิดงาน</th><th>% ปิดงาน</th></tr>
+                    </thead>
+                    <tbody>
+                        ${emp.types.map(typeData => `
+                            <tr>
+                                <td>${typeData.type}</td>
+                                <td>${typeData.scanned}</td>
+                                <td>${typeData.closed}</td>
+                                <td>${typeData.rate}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            kpiResultContainer.appendChild(card);
+        });
     }
 
     function getTasksColorClass(value) {
@@ -59,10 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function exportDashboardAsImage() {
         const reportElement = document.getElementById('report-content');
-        if (!reportElement) {
-            alert("ไม่พบเนื้อหาสำหรับสร้างรายงาน");
-            return;
-        }
+        if (!reportElement) return;
 
         exportImageButton.textContent = 'กำลังสร้างรูปภาพ...';
         exportImageButton.disabled = true;
@@ -72,10 +93,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 scale: 2,
                 useCORS: true,
                 allowTaint: true,
-                backgroundColor: '#f4f6f8'
+                backgroundColor: '#f8f9fa'
             });
             const link = document.createElement('a');
-            link.download = `kpi_courier_report_${new Date().toISOString().slice(0, 10)}.png`;
+            link.download = `kpi_courier_scorecard_${new Date().toISOString().slice(0, 10)}.png`;
             link.href = canvas.toDataURL("image/png", 1.0);
             link.click();
         } catch (err) {
@@ -83,11 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("เกิดข้อผิดพลาดในการสร้างรูปภาพ");
         } finally {
             exportImageButton.textContent = 'บันทึกเป็นรูปภาพสำเร็จ';
-            exportImageButton.style.backgroundColor = '#27ae60';
+            exportImageButton.style.backgroundColor = '#2dce89';
         }
     }
 
-    // --- Main Logic ---
     const urlParams = new URLSearchParams(window.location.search);
     const dataParam = urlParams.get('data');
     if (dataParam) {
@@ -95,11 +115,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const jsonString = decodeURIComponent(escape(atob(dataParam.replace(/ /g, '+'))));
             const decodedData = JSON.parse(jsonString);
             
-            if (processTimeDisplay) {
-                processTimeDisplay.textContent = `วันที่ประมวลผล: ${decodedData.processTime}`;
-            }
-            renderSummaryCards(decodedData.summaryData); 
-            renderTable(decodedData.tableData);
+            processTimeDisplay.textContent = `วันที่ประมวลผล: ${decodedData.processTime}`;
+            renderCards(decodedData.tableData);
         } catch (e) {
             console.error("ไม่สามารถถอดรหัสข้อมูลได้:", e);
             document.body.innerHTML = '<h1>เกิดข้อผิดพลาด: ไม่สามารถแสดงข้อมูลได้</h1>';
@@ -108,7 +125,5 @@ document.addEventListener('DOMContentLoaded', () => {
          document.body.innerHTML = '<h1>ไม่พบข้อมูลสำหรับสร้างรายงาน</h1>';
     }
 
-    if(exportImageButton) {
-        exportImageButton.addEventListener('click', exportDashboardAsImage);
-    }
+    exportImageButton.addEventListener('click', exportDashboardAsImage);
 });
