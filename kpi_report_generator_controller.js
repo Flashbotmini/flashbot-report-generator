@@ -78,7 +78,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const dataParam = urlParams.get('data');
     if (dataParam) {
         try {
-            const decodedData = JSON.parse(atob(dataParam));
+            // --- [FIXED] แก้ไขการถอดรหัสเพื่อรองรับภาษาไทย ---
+            const jsonString = decodeURIComponent(escape(atob(dataParam)));
+            const decodedData = JSON.parse(jsonString);
+            
             processTimeDisplay.textContent = `วันที่ประมวลผล: ${decodedData.processTime}`;
             renderTable(decodedData.tableData);
         } catch (e) {
