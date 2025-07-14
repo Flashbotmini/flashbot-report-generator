@@ -1,9 +1,11 @@
-// js/views/kpi_report_generator_controller.js
+// kpi_report_generator_controller.js
 document.addEventListener('DOMContentLoaded', () => {
 
     const kpiTableBody = document.getElementById('kpiTableBody');
     const exportImageButton = document.getElementById('exportImageButton');
     const processTimeDisplay = document.getElementById('processTimeDisplay');
+
+    // --- [FIXED] - ลบฟังก์ชัน initializePage ที่เรียกใช้ chrome.storage.local ออกทั้งหมด ---
 
     function renderTable(data) {
         if (!kpiTableBody || !data) return;
@@ -85,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- [FIXED] Main Logic - ตัดโค้ดที่ไม่จำเป็นออก ---
+    // --- Main Logic ---
     const urlParams = new URLSearchParams(window.location.search);
     const dataParam = urlParams.get('data');
     if (dataParam) {
