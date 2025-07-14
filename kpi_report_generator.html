@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>KPI Courier Report Generator</title>
+    <link rel="stylesheet" href="../css/style.css"> 
+    <style>
+        body { width: auto; background-color: #f4f6f8; padding: 20px; }
+        .container { max-width: 95%; margin: auto; }
+        .kpi-actions { text-align: center; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="dashboard-content-to-export">
+            <div class="kpi-header-info">
+                <span id="processTimeDisplay" style="float: right; font-size: 0.9em;"></span>
+                <h2>ตารางสรุป KPI COURIER</h2>
+            </div>
+            <div class="table-container courier-table-container" style="max-height: none; overflow-x: visible;">
+                <table id="courierKpiTable">
+                    <thead>
+                        <tr>
+                            <th>รหัสพนักงาน</th>
+                            <th>ชื่อ</th>
+                            <th>เวลาเข้างาน</th>
+                            <th>ประเภทพัสดุ</th>
+                            <th>สแกนส่งมอบ</th>
+                            <th>ยืนยันส่งมอบ</th>
+                            <th>อัตราปิดงาน</th>
+                            <th>พัสดุติดปัญหา</th>
+                            <th>ต้องปิดงานเพิ่ม</th>
+                            <th>เกรด</th>
+                        </tr>
+                    </thead>
+                    <tbody id="kpiTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="kpi-actions">
+            <button id="exportImageButton">บันทึกเป็นรูปภาพ</button>
+        </div>
+    </div>
+
+    <script src="html2canvas.min.js"></script>
+    <script src="kpi_report_generator_controller.js"></script>
+</body>
+</html>
