@@ -1,13 +1,11 @@
-/* style.css */
+/* css/style.css */
 
 body {
-  font-family: 'Prompt', sans-serif;
+  font-family: 'Prompt', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
-  /* padding: 20px; */ /* Moved to .container */
   background: #f9fafb;
   color: #333;
-  width: 300px; /* Default width for popups like login, member */
-  /* height will be auto or set by specific view like admin-view or compact-view */
+  width: 300px;
 }
 
 .container {
@@ -127,6 +125,9 @@ input[type="checkbox"] {
     margin-bottom: 15px;
     text-align: left;
     font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 .user-info p {
     margin: 5px 0;
@@ -139,17 +140,12 @@ input[type="checkbox"] {
     color: white;
     padding: 6px 12px;
     font-size: 12px;
-    float: right; /* Position it to the right if desired */
 }
 .user-info button:hover {
     background-color: #c0392b;
 }
 
-
-/* Bot Working Container Styles (from V2, can be enhanced) */
-/*#botWorkingContainer {  Used in popup_member.html */
-  /* Styles for when the bot is active 
-}*/
+/* Bot Working Container Styles */
 .status-info {
   background: #f8f9fa;
   border: 1px solid #e9ecef;
@@ -158,25 +154,22 @@ input[type="checkbox"] {
   margin: 20px 0;
   text-align: left;
 }
-
 .status-text {
   font-size: 16px;
   font-weight: bold;
   color: #2c3e50;
   margin-bottom: 10px;
 }
-
 .timer-display {
   font-size: 14px;
   color: #7f8c8d;
   font-family: 'Courier New', monospace;
 }
-
-.stop-btn { /* For #stopBotButton */
+.stop-btn {
   background-color: #e74c3c;
   color: white;
   font-size: 16px;
-  padding: 10px 20px; /* Adjusted from V2 */
+  padding: 10px 20px;
   margin: 10px 5px;
   border-radius: 6px;
   font-weight: bold;
@@ -187,202 +180,67 @@ input[type="checkbox"] {
 
 /* Styles for Admin Panel Popup Size & Table */
 body.admin-view {
-    width: 750px;  /* Desired width for Admin panel */
-    height: 550px; /* Desired height for Admin panel */
+    width: 750px;
+    height: 550px;
 }
-
-#adminContainer .user-info { /* Specific styling for admin user info if needed */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-#adminContainer .user-info p {
-    margin-right: auto; /* Push logout button to the right */
-}
-
-
-#adminContainer h1 {
-    margin-bottom: 15px;
-}
-
-#userManagementSection h2 {
-    margin-top: 10px; /* Reduced top margin */
-    margin-bottom: 10px;
-    text-align: left;
-}
-#userManagementSection #fetchAllUsersButton {
-    margin-bottom: 10px;
-}
-
 .user-table-container {
   margin-top: 10px;
-  max-height: 380px; /* Adjust height for the user table within the new popup size */
+  max-height: 380px;
   overflow-y: auto;
   border: 1px solid #ccc;
 }
-
 #usersTable {
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
 }
-
 #usersTable th, #usersTable td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
   white-space: nowrap; 
 }
-
 #usersTable th {
   background-color: #f0f0f0;
   position: sticky; 
   top: 0;
-  z-index: 1; /* Ensure header stays above content when scrolling */
+  z-index: 1;
 }
-
 #usersTable .actions button {
   margin-right: 4px;
-  margin-bottom: 3px; /* Add some bottom margin if buttons wrap */
+  margin-bottom: 3px;
   padding: 4px 7px;
   font-size: 10px;
-  min-width: 50px; /* Give buttons a minimum width */
+  min-width: 50px;
   box-sizing: border-box;
 }
 #usersTable .actions {
-    min-width: 180px; /* Adjust min-width for actions column to fit buttons */
-    white-space: normal; /* Allow buttons to wrap if needed, though nowrap on td tries to prevent it */
+    min-width: 180px;
+    white-space: normal;
 }
-
 .loading-message, .error-message {
     margin-top:15px;
     padding: 10px;
     border-radius: 4px;
     text-align: center;
 }
-.loading-message {
-    background-color: #e9ecef;
-}
-.error-message {
-    background-color: #f8d7da;
-    color: #721c24;
-}
+.loading-message { background-color: #e9ecef; }
+.error-message { background-color: #f8d7da; color: #721c24; }
 
-/* System Settings Section Styles */
-#systemSettingsSection {
-    margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px solid #eee;
-    text-align: left; /* ให้ h2 ชิดซ้าย */
-}
-
-#systemSettingsSection h2 {
-    text-align: left;
-    margin-bottom: 15px;
-}
-
-.settings-action-button { /* สำหรับปุ่ม Load และ Save */
-    display: inline-block; /* หรือ block ถ้าต้องการให้เต็มบรรทัด */
-    margin-bottom: 15px;
-}
-
-#settingsForm {
-    background-color: #fdfdfd;
-    padding: 15px;
-    border-radius: 6px;
-    border: 1px solid #e0e0e0;
-}
-
-.settings-note {
-    font-size: 0.85em;
-    color: #666;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px dashed #eee;
-}
-
-.settings-group {
-    margin-bottom: 20px;
-    padding: 15px;
-    border: 1px solid #e9ecef;
-    border-radius: 4px;
-    background-color: #fff;
-}
-
-.settings-group legend {
-    font-weight: bold;
-    color: #495057;
-    padding: 0 10px;
-    font-size: 1.1em;
-}
-
-.setting-item {
-    margin-bottom: 12px;
-    display: flex; /* For better alignment of label and input */
-    flex-wrap: wrap; /* Allow wrapping on small screens */
-    align-items: center;
-}
-
-.setting-item label {
-    flex-basis: 280px; /* Adjust as needed for label width */
-    margin-right: 10px;
-    margin-bottom: 0; /* Remove bottom margin since flex handles spacing */
-    font-weight: normal; /* Normal weight for setting labels */
-    color: #343a40;
-}
-
-.setting-input, .setting-input-readonly {
-    flex-grow: 1;
-    min-width: 150px; /* Ensure input is not too small */
-    padding: 8px 10px;
-    border-radius: 4px;
-    border: 1px solid #ced4da;
-    font-size: 14px;
-}
-
-.setting-input-readonly {
-    background-color: #e9ecef; /* Light grey for readonly fields */
-    cursor: not-allowed;
-}
-
-#saveSettingsButton {
-    display: block; /* Make save button take full width or center it */
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #28a745; /* Green for save */
-    color: white;
-}
-#saveSettingsButton:hover {
-    background-color: #218838;
-}
-
-#saveSettingsMessage.success {
-    color: #155724;
-    background-color: #d4edda;
-    border-color: #c3e6cb;
-}
-
-#saveSettingsMessage.error {
-    color: #721c24;
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
-}
-
-/* ** NEW: Modal Styles ** */
+/* Modal Styles */
 .modal-overlay {
-    position: fixed; /* Stay in place */
-    z-index: 100; /* Sit on top */
+    position: fixed;
+    z-index: 100;
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    display: flex; /* Used to center the modal content */
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    display: flex;
     justify-content: center;
     align-items: center;
 }
-
 .modal-content {
     background-color: #fefefe;
     margin: auto;
@@ -394,222 +252,70 @@ body.admin-view {
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     text-align: left;
 }
+.modal-content h3 { margin-top: 0; color: #34495e; }
+.modal-actions { margin-top: 20px; text-align: right; }
+.modal-actions button { margin-left: 10px; }
+#modalConfirmBtn { background-color: #27ae60; color: white; }
+#modalConfirmBtn:hover { background-color: #219150; }
+#modalCancelBtn { background-color: #7f8c8d; color: white; }
+#modalCancelBtn:hover { background-color: #6c7a89; }
 
-.modal-content h3 {
-    margin-top: 0;
-    color: #34495e;
-}
+/* Expiry & Search */
+.expiry-soon { color: #f1c40f; font-weight: bold; }
+.expiry-critical { color: #e74c3c; font-weight: bold; }
+.expiry-safe { color: #27ae60; font-weight: bold; }
+.search-container { margin-bottom: 15px; display: flex; gap: 10px; align-items: center; }
+.search-container input { flex-grow: 1; margin-bottom: 0; }
+.search-container button { margin: 0; }
 
-.modal-content label {
-    font-weight: bold;
-    margin-bottom: 8px;
-    display: block;
-}
-
-.modal-content select {
-    width: 100%;
-    padding: 8px;
-    font-size: 14px;
-}
-
-.modal-actions {
-    margin-top: 20px;
-    text-align: right;
-}
-
-.modal-actions button {
-    margin-left: 10px;
-}
-
-#modalConfirmBtn {
-    background-color: #27ae60; /* Green */
-    color: white;
-}
-#modalConfirmBtn:hover {
-    background-color: #219150;
-}
-
-#modalCancelBtn {
-    background-color: #7f8c8d; /* Grey */
-    color: white;
-}
-#modalCancelBtn:hover {
-    background-color: #6c7a89;
-}
-
-/* ** Styles for Expiry Date Colors ** */
-.expiry-soon { 
-  color: #f1c40f; 
-  font-weight: bold; 
-} /* สีเหลือง */
-.expiry-critical { 
-  color: #e74c3c; 
-  font-weight: bold; 
-} /* สีแดง */
-.expiry-safe { 
-  color: #27ae60; 
-  font-weight: bold; 
-} /* สีเขียว */
-
-.search-container { 
-  margin-bottom: 15px; 
-  display: flex; 
-  gap: 10px; 
-  align-items: center; 
-}
-
-.search-container input { 
-  flex-grow: 1; 
-  margin-bottom: 0; 
-}
-
-.search-container button { 
-  margin: 0; 
-}
-
-/* --- KPI Dashboard Styles (Final Layout Fix) --- */
+/* KPI General Styles */
 .kpi-view { 
-    width: 780px; /* [แก้ไข] ปรับความกว้างให้พอดีกับข้อจำกัดของ Extension */
-    min-height: 580px; /* กำหนดความสูงให้เหมาะสม */
+    width: 820px; 
+    min-height: 580px;
     background-color: #f4f6f8; 
 }
-
 .kpi-header-info {
     padding: 10px;
     margin-top: 15px;
     background-color: #fff;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
-
 .kpi-header-info h2 {
     text-align: center;
     margin: 0 0 10px 0;
     color: #333;
     font-size: 1.4em;
 }
-
-.kpi-subheader {
-    display: flex;
-    justify-content: space-between;
-    color: #666;
-    font-size: 0.9em;
-    padding: 5px 10px;
-    background-color: #f8f9fa;
-    border-radius: 4px;
+.kpi-grid-container {
+    display: grid;
+    gap: 15px;
+    margin: 15px 0;
 }
-
-.kpi-grid-container { 
-    display: grid; 
-    grid-template-columns: repeat(3, 1fr); /* เปลี่ยนเป็น 3 คอลัมน์ */
-    gap: 15px; 
-    margin: 15px 0; 
-}
-
-.kpi-card { 
-    background-color: #ffffff; 
-    border-radius: 8px; 
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
-    padding: 15px; 
-    border-left: 5px solid #ccc; 
-}
-.kpi-card .card-header { 
-    display: flex; 
-    align-items: center; 
-    font-size: 1.1em; 
-    font-weight: bold; 
-    padding-bottom: 8px; 
-    margin-bottom: 8px; 
-    border-bottom: 1px solid #eee; 
-}
-.kpi-card .logo { width: 22px; height: 22px; margin-right: 8px; }
-.kpi-card .kpi-metric { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    font-size: 0.9em; 
-    margin-bottom: 6px; 
-}
-.kpi-card .kpi-metric b { font-size: 1em; }
-.kpi-card .main-score { margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;}
-.kpi-card .main-score b { font-size: 1.5em; color: #007bff; }
-.kpi-card .goal-input { width: 45px; text-align: right; border: 1px solid #ddd; border-radius: 4px; padding: 2px 5px; }
-
-/* --- Brand Colors --- */
-.card-tiktok { border-left-color: #000000; }
-.card-lazada { border-left-color: #0F1A6A; }
-.card-shopee { border-left-color: #EE4D2D; }
-.card-shein { border-left-color: #555555; }
-.card-speed { border-left-color: #FFC700; }
-.card-epod { border-left-color: #28a745; }
-.card-c-ka { border-left-color: #6c757d; }
-
-/* สไตล์สำหรับตารางสรุปสถานะพัสดุ */
-.kpi-section h2 {
-    font-size: 1.2em;
-    padding-bottom: 5px;
-    border-bottom: 2px solid #eee;
-    margin-bottom: 10px;
-}
-.table-container {
-    border: 1px solid #dee2e6;
+.kpi-card {
+    background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    overflow-x: auto; /* เพิ่ม scroll แนวนอนถ้าจำเป็น */
+    padding: 15px;
+    border-left: 5px solid #ccc;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-#kpiStatusTable {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #fff;
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
-#kpiStatusTable th {
-    background-color: #343a40;
-    color: white;
-    font-weight: 600;
-}
-#kpiStatusTable th, #kpiStatusTable td {
-    padding: 8px 5px;
-    text-align: center;
-    border-bottom: 1px solid #dee2e6;
-    white-space: nowrap;
-}
-#kpiStatusTable tbody tr:last-child td {
-    border-bottom: none;
-}
-#kpiStatusTable tbody tr:nth-child(even) {
-    background-color: #f8f9fa;
-}
-#kpiStatusTable .status-value {
+.kpi-card .card-header {
+    display: flex;
+    align-items: center;
+    font-size: 1.1em;
     font-weight: bold;
-    font-size: 1em;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #eee;
 }
-#kpiStatusTable .status-pct {
-    font-size: 0.75em;
-    color: #888;
-    display: block;
+.kpi-actions {
+    margin-top: 15px;
 }
-#kpiStatusTable td:first-child {
-    text-align: left;
-    padding-left: 15px;
-}
-
-/* ** [FIX] NEW: KPI Value Color Conditions **
-  เพิ่ม .kpi-card เข้าไปข้างหน้าเพื่อเพิ่มความเฉพาะเจาะจง (Specificity)
-  ให้สามารถ override สีน้ำเงิน (.kpi-card .main-score b) ได้
-*/
-.kpi-card .kpi-metric b.kpi-good, 
-.kpi-card .main-score b.kpi-good {
-    color: #27ae60; /* Green */
-}
-.kpi-card .kpi-metric b.kpi-warning, 
-.kpi-card .main-score b.kpi-warning {
-    color: #f1c40f; /* Yellow/Orange */
-}
-.kpi-card .kpi-metric b.kpi-danger, 
-.kpi-card .main-score b.kpi-danger {
-    color: #e74c3c; /* Red */
-}
-
 
 /* KPI Courier Specific Styles */
 .kpi-grid-container.courier-summary {
