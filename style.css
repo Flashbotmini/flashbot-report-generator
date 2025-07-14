@@ -89,9 +89,9 @@ h1 {
     gap: 10px;
     /* [MODIFIED] ปรับ gap */
     transition: all 0.3s ease;
-    width: 200px;
+    width: 220px;
     /* [MODIFIED] กำหนดความกว้าง */
-    height: 250px;
+    height: 320px;
     /* [MODIFIED] กำหนดความสูง */
     box-sizing: border-box;
     /* [MODIFIED] Include padding and border in element's total width and height */
@@ -246,11 +246,11 @@ h1 {
 }
 
 .tasks-add.tasks-green {
-    color: #2dce89;
+    color: #4caf0a;
 }
 
 .tasks-add.tasks-orange {
-    color: #fb6340;
+    color: #ff9100;
 }
 
 .tasks-add.tasks-yellow {
@@ -258,7 +258,7 @@ h1 {
 }
 
 .tasks-add.tasks-red {
-    color: #f5365c;
+    color: #ff0000;
 }
 
 .grade-badge.grade-a {
