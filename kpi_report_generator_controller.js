@@ -73,13 +73,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Main Logic ---
     const urlParams = new URLSearchParams(window.location.search);
     const dataParam = urlParams.get('data');
     if (dataParam) {
         try {
             // --- [FIXED] แก้ไขการถอดรหัสเพื่อรองรับภาษาไทย ---
-            const jsonString = decodeURIComponent(escape(atob(dataParam)));
+            const jsonString = decodeURIComponent(escape(atob(dataParam.replace(/ /g, '+'))));
             const decodedData = JSON.parse(jsonString);
             
             processTimeDisplay.textContent = `วันที่ประมวลผล: ${decodedData.processTime}`;
