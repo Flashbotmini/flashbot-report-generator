@@ -56,18 +56,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function exportDashboardAsImage() {
-        // --- [FIXED] เปลี่ยนเป้าหมายการถ่ายภาพเป็น div ใหม่ ---
-        const captureElement = document.getElementById('capture-this-area');
-        if (!captureElement) return;
+        // --- [FIXED] เปลี่ยนเป้าหมายการถ่ายภาพเป็น div ใหม่ที่ครอบทุกอย่าง ---
+        const reportElement = document.getElementById('report-content');
+        if (!reportElement) {
+            alert("ไม่พบเนื้อหาสำหรับสร้างรายงาน");
+            return;
+        }
 
         exportImageButton.textContent = 'กำลังสร้างรูปภาพ...';
         exportImageButton.disabled = true;
 
         try {
-            const canvas = await html2canvas(captureElement, {
+            const canvas = await html2canvas(reportElement, {
                 scale: 2,
                 useCORS: true,
-                allowTaint: true
+                allowTaint: true,
+                backgroundColor: '#f4f6f8' // กำหนดสีพื้นหลังให้ตรงกับ body
             });
             const link = document.createElement('a');
             link.download = `kpi_courier_report_${new Date().toISOString().slice(0, 10)}.png`;
