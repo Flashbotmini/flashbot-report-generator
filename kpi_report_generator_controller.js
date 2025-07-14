@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span class="value problem-value">${emp.problemParcels}</span>
                         </div>
                         <div class="stat-item">
-                            <span class="label">ต้องปิดงานเพิ่ม</span>
+                            <span class="label">ต้องทำเพิ่ม</span>
                             <span class="value tasks-add ${getTasksColorClass(emp.tasksToAdd)}">${emp.tasksToAdd}</span>
                         </div>
                     </div>
