@@ -5,15 +5,18 @@
     <title>KPI Courier Report Generator</title>
     <link rel="stylesheet" href="style.css"> 
     <style>
+        /* สไตล์เพิ่มเติมสำหรับหน้าเว็บโดยเฉพาะ */
         body { width: auto; background-color: #f4f6f8; padding: 20px; }
         .container { max-width: 95%; margin: auto; }
-        .kpi-actions { text-align: center; margin: 20px 0; }
+        .kpi-actions { text-align: center; margin-top: 20px; }
+        #report-content { background-color: #f4f6f8; padding: 1px; } /* เพิ่ม padding เล็กน้อยเพื่อให้แน่ใจว่าขอบไม่ถูกตัด */
     </style>
 </head>
 <body>
     <div class="container">
+        
         <div id="report-content">
-            <div class="kpi-grid-container courier-summary" style="grid-template-columns: repeat(4, 1fr);">
+            <div class="kpi-grid-container courier-summary">
                 <div class="kpi-card">
                     <div class="card-header">PRIORITY</div>
                     <div id="summary_pri" class="card-body"></div>
@@ -56,6 +59,7 @@
                 </table>
             </div>
         </div>
+
         <div class="kpi-actions">
             <button id="exportImageButton">บันทึกเป็นรูปภาพ</button>
         </div>
