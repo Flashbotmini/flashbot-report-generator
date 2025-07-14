@@ -1,4 +1,4 @@
-/* css/style.css (ฉบับปรับปรุงดีไซน์) */
+/* css/style.css (ฉบับปรับปรุงดีไซน์และขนาด) */
 
 /* --- General & Fonts --- */
 body {
@@ -8,9 +8,15 @@ body {
   color: #495057; /* Darker Gray for text */
 }
 
-.container {
-  text-align: center;
+/* --- [MODIFIED] แก้ไข Container หลักสำหรับหน้า Report --- */
+.report-container {
+  width: 1060px;
+  min-height: 945px;
+  margin: 20px auto; /* จัดให้อยู่ตรงกลางหน้าจอ */
   padding: 20px;
+  background-color: #f4f6f8;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
@@ -18,6 +24,7 @@ h1 {
   color: #343a40;
   margin-bottom: 10px;
   font-weight: 600;
+  text-align: center;
 }
 
 h2 {
@@ -34,7 +41,7 @@ button {
   border: none;
   padding: 10px 22px;
   font-weight: bold;
-  border-radius: 8px; /* More rounded corners */
+  border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   margin: 5px;
@@ -53,27 +60,6 @@ button:disabled {
   box-shadow: none;
 }
 
-/* --- User Info & Controls --- */
-.user-info {
-    background-color: #fff;
-    padding: 12px 18px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    text-align: left;
-    font-size: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #e9ecef;
-}
-.upload-section {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    margin: 20px 0;
-    border: 1px solid #e9ecef;
-}
-
 /* --- Redesigned KPI Cards --- */
 .kpi-grid-container {
     display: grid;
@@ -86,12 +72,11 @@ button:disabled {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     padding: 20px;
     border: 1px solid #e9ecef;
-    border-left: none; /* Remove old border */
     position: relative;
     overflow: hidden;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.kpi-card::before { /* New color indicator bar */
+.kpi-card::before {
     content: '';
     position: absolute;
     left: 0;
@@ -122,18 +107,17 @@ button:disabled {
 .kpi-grid-container.courier-summary {
     grid-template-columns: repeat(4, 1fr);
 }
-/* Card-specific color indicators */
-#summary_pri_card::before, #summary_pri + .kpi-card::before { background-color: #5e72e4; }
-#summary_tt_card::before, #summary_tt + .kpi-card::before { background-color: #11cdef; }
-#summary_all_card::before, #summary_all + .kpi-card::before { background-color: #2dce89; }
-#summary_problem_card::before, #summary_problem + .kpi-card::before { background-color: #f5365c; }
+.kpi-card:nth-child(1)::before { background-color: #5e72e4; }
+.kpi-card:nth-child(2)::before { background-color: #11cdef; }
+.kpi-card:nth-child(3)::before { background-color: #2dce89; }
+.kpi-card:nth-child(4)::before { background-color: #f5365c; }
 
 .kpi-grid-container.courier-summary .problem-total {
     font-size: 2.8em;
     font-weight: 700;
     display: block;
     text-align: center;
-    color: #f5365c; /* Red for problems */
+    color: #f5365c;
 }
 
 /* --- Redesigned KPI Table --- */
@@ -150,7 +134,7 @@ button:disabled {
     border: 1px solid #e9ecef;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    overflow: hidden; /* Important for rounded corners */
+    overflow: hidden;
 }
 #courierKpiTable {
     width: 100%;
@@ -162,7 +146,6 @@ button:disabled {
     font-size: 13px;
     white-space: nowrap;
     text-align: center;
-    border: none;
     border-bottom: 1px solid #e9ecef;
 }
 #courierKpiTable th {
@@ -173,11 +156,7 @@ button:disabled {
     font-size: 11px;
     letter-spacing: 0.5px;
 }
-/* Zebra Striping */
-#courierKpiTable tbody tr.group-row-1 {
-    background-color: #ffffff;
-}
-#courierKpiTable tbody tr.group-row-2 {
+#courierKpiTable tbody tr:nth-child(even) {
     background-color: #f6f9fc;
 }
 #courierKpiTable tbody tr:last-child td {
@@ -199,7 +178,7 @@ button:disabled {
     font-size: 12px;
     font-weight: bold;
     padding: 5px 12px !important;
-    border-radius: 15px; /* Pill shape */
+    border-radius: 15px;
     text-transform: uppercase;
     min-width: 30px;
     display: inline-block;
@@ -213,4 +192,5 @@ button:disabled {
 /* Final Action Button */
 .kpi-actions {
     margin-top: 25px;
+    text-align: center;
 }
