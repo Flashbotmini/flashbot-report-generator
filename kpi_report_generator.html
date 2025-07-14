@@ -2,69 +2,24 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>KPI Courier Report Generator</title>
-    <link rel="stylesheet" href="style.css"> 
-    <style>
-        body { width: auto; background-color: #f8f9fa; padding: 20px; }
-        /* ไม่จำเป็นต้องใช้สไตล์เพิ่มเติมที่นี่แล้ว */
-    </style>
+    <title>Flash Bot - KPI Courier</title>
+    <link rel="stylesheet" href="../css/style.css">
 </head>
-<body>
-    <div class="report-container">
-        
-        <h1>KPI COURIER</h1>
-
-        <div class="kpi-grid-container courier-summary">
-            <div class="kpi-card" id="summary_pri_card">
-                <div class="card-header">PRIORITY</div>
-                <div id="summary_pri" class="card-body"></div>
-            </div>
-            <div class="kpi-card" id="summary_tt_card">
-                <div class="card-header">TIKTOK</div>
-                <div id="summary_tt" class="card-body"></div>
-            </div>
-            <div class="kpi-card" id="summary_all_card">
-                <div class="card-header">ALL</div>
-                <div id="summary_all" class="card-body"></div>
-            </div>
-            <div class="kpi-card" id="summary_problem_card">
-                <div class="card-header">พัสดุติดปัญหา</div>
-                <div id="summary_problem" class="card-body"></div>
-            </div>
-        </div>
-
-        <div id="report-content">
+<body class="kpi-view">
+    <div class="container" id="kpiContainer">
+        <div id="dashboard-content-to-export">
             <div class="kpi-header-info">
                 <span id="processTimeDisplay" style="float: right; font-size: 0.9em;"></span>
-                <h2>ตารางสรุปผล</h2>
+                <h2>สรุปผลงานพนักงาน</h2>
             </div>
-            <div class="table-container courier-table-container">
-                <table id="courierKpiTable">
-                    <thead>
-                        <tr>
-                            <th>รหัสพนักงาน</th>
-                            <th>ชื่อ</th>
-                            <th>เวลาเข้างาน</th>
-                            <th>ประเภทพัสดุ</th>
-                            <th>สแกนส่งมอบ</th>
-                            <th>ยืนยันส่งมอบ</th>
-                            <th>อัตราปิดงาน</th>
-                            <th>พัสดุติดปัญหา</th>
-                            <th>ต้องปิดงานเพิ่ม</th>
-                            <th>เกรด</th>
-                        </tr>
-                    </thead>
-                    <tbody id="kpiTableBody"></tbody>
-                </table>
-            </div>
+            <div id="kpiResultContainer" class="kpi-card-view-container">
+                </div>
         </div>
-
+        
         <div class="kpi-actions">
             <button id="exportImageButton">บันทึกเป็นรูปภาพ</button>
         </div>
     </div>
-
-    <script src="html2canvas.min.js"></script>
-    <script src="kpi_report_generator_controller.js"></script>
-</body>
+    
+    </body>
 </html>
