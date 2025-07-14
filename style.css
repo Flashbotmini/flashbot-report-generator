@@ -1,129 +1,177 @@
-// kpi_report_generator_controller.js
-document.addEventListener('DOMContentLoaded', () => {
+/* css/style.css (สำหรับหน้า GitHub Pages Scorecard) */
 
-    const exportImageButton = document.getElementById('exportImageButton');
-    const processTimeDisplay = document.getElementById('processTimeDisplay');
-    const kpiResultContainer = document.getElementById('kpiResultContainer');
+body {
+  font-family: 'Prompt', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  background: #f8f9fa;
+  color: #495057;
+}
 
-    function renderCards(data) {
-        if (!kpiResultContainer || !data) return;
-        kpiResultContainer.innerHTML = '';
+h1 {
+  font-size: 24px;
+  color: #343a40;
+  margin-bottom: 10px;
+  font-weight: 600;
+  text-align: center;
+}
 
-        if (data.length === 0) {
-            kpiResultContainer.innerHTML = '<p>ไม่พบข้อมูลสำหรับแสดงผล</p>';
-            return;
-        }
+.kpi-header-info {
+    padding: 0;
+    margin-top: 25px;
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 20px;
+}
 
-        data.forEach((emp) => {
-            const card = document.createElement('div');
-            card.className = 'employee-scorecard';
-            
-            const allData = emp.types.find(t => t.type === 'รวมทั้งหมด') || { rate: '0%' };
-            const allRate = parseFloat(allData.rate.replace('%', ''));
-            const gradeClass = getGradeColorClass(emp.grade);
+.kpi-card-view-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+    padding: 5px;
+}
 
-            card.innerHTML = `
-                <div class="scorecard-header">
-                    <div class="employee-info">
-                        <h3>${emp.name}</h3>
-                        <p>ID: ${emp.id} | Login: ${emp.loginTime}</p>
-                    </div>
-                    <div class="grade-badge ${gradeClass}">${emp.grade}</div>
-                </div>
-                <div class="scorecard-body">
-                    <div class="kpi-gauge ${gradeClass}" style="--p:${allRate.toFixed(1)};"></div>
-                    <div class="kpi-stats">
-                        <div class="stat-item">
-                            <span class="label">พัสดุติดปัญหา</span>
-                            <span class="value problem-value">${emp.problemParcels}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="label">ต้องปิดงานเพิ่ม</span>
-                            <span class="value tasks-add ${getTasksColorClass(emp.tasksToAdd)}">${emp.tasksToAdd}</span>
-                        </div>
-                    </div>
-                </div>
-                <table class="scorecard-table">
-                    <thead>
-                        <tr><th>ประเภท</th><th>สแกน</th><th>ปิดงาน</th><th>% ปิดงาน</th></tr>
-                    </thead>
-                    <tbody>
-                        ${emp.types.map(typeData => `
-                            <tr>
-                                <td>${typeData.type}</td>
-                                <td>${typeData.scanned}</td>
-                                <td>${typeData.closed}</td>
-                                <td>${typeData.rate}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-            kpiResultContainer.appendChild(card);
-        });
-    }
+.employee-scorecard {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 7px 30px -10px rgba(150,170,180,0.5);
+    padding: 20px;
+    border: 1px solid #e9ecef;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    transition: all 0.3s ease;
+}
+.employee-scorecard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px -10px rgba(150,170,180,0.7);
+}
 
-    function getTasksColorClass(value) {
-        if (value <= 0) return 'tasks-green';
-        if (value <= 10) return 'tasks-orange';
-        if (value <= 20) return 'tasks-yellow';
-        return 'tasks-red';
-    }
+.scorecard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.scorecard-header .employee-info h3 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #343a40;
+    font-weight: 600;
+}
+.scorecard-header .employee-info p {
+    margin: 4px 0 0;
+    font-size: 0.85em;
+    color: #8898aa;
+}
+.scorecard-header .grade-badge {
+    font-size: 12px;
+    font-weight: bold;
+    padding: 5px 12px;
+    border-radius: 15px;
+    text-transform: uppercase;
+    color: white;
+}
 
-    function getGradeColorClass(grade) {
-        switch (grade) {
-            case 'A': return 'grade-a';
-            case 'B': return 'grade-b';
-            case 'C': return 'grade-c';
-            case 'D': return 'grade-d';
-            case 'F': return 'grade-f';
-            default: return '';
-        }
-    }
+.scorecard-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 20px;
+}
 
-    async function exportDashboardAsImage() {
-        const reportElement = document.getElementById('report-content');
-        if (!reportElement) return;
+@property --p{
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+.kpi-gauge {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  font-size: 2em;
+  font-weight: 700;
+  display: grid;
+  place-content: center;
+  transition: --p 1s;
+  animation: p 1s 1 forwards;
+}
+.kpi-gauge::before {
+  content: counter(p) '%';
+  counter-reset: p var(--p);
+}
+@keyframes p {
+  from {--p: 0}
+}
 
-        exportImageButton.textContent = 'กำลังสร้างรูปภาพ...';
-        exportImageButton.disabled = true;
+.kpi-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: left;
+}
+.kpi-stats .stat-item .label {
+    display: block;
+    font-size: 0.8em;
+    color: #8898aa;
+    margin-bottom: 4px;
+}
+.kpi-stats .stat-item .value {
+    font-weight: 600;
+    font-size: 1.2em;
+}
+.kpi-stats .problem-value { color: #f5365c; }
 
-        try {
-            const canvas = await html2canvas(reportElement, {
-                scale: 2,
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: '#f8f9fa'
-            });
-            const link = document.createElement('a');
-            link.download = `kpi_courier_scorecard_${new Date().toISOString().slice(0, 10)}.png`;
-            link.href = canvas.toDataURL("image/png", 1.0);
-            link.click();
-        } catch (err) {
-            console.error("เกิดข้อผิดพลาดในการสร้างรูปภาพ:", err);
-            alert("เกิดข้อผิดพลาดในการสร้างรูปภาพ");
-        } finally {
-            exportImageButton.textContent = 'บันทึกเป็นรูปภาพสำเร็จ';
-            exportImageButton.style.backgroundColor = '#2dce89';
-        }
-    }
+.scorecard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+.scorecard-table th, .scorecard-table td {
+    text-align: center;
+    padding: 8px;
+    font-size: 0.9em;
+    border-bottom: 1px solid #e9ecef;
+}
+.scorecard-table th {
+    font-weight: 600;
+    color: #8898aa;
+    font-size: 0.8em;
+}
+.scorecard-table tr:last-child td {
+    border-bottom: none;
+}
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const dataParam = urlParams.get('data');
-    if (dataParam) {
-        try {
-            const jsonString = decodeURIComponent(escape(atob(dataParam.replace(/ /g, '+'))));
-            const decodedData = JSON.parse(jsonString);
-            
-            processTimeDisplay.textContent = `วันที่ประมวลผล: ${decodedData.processTime}`;
-            renderCards(decodedData.tableData);
-        } catch (e) {
-            console.error("ไม่สามารถถอดรหัสข้อมูลได้:", e);
-            document.body.innerHTML = '<h1>เกิดข้อผิดพลาด: ไม่สามารถแสดงข้อมูลได้</h1>';
-        }
-    } else {
-         document.body.innerHTML = '<h1>ไม่พบข้อมูลสำหรับสร้างรายงาน</h1>';
-    }
+.tasks-add.tasks-green { color: #2dce89; }
+.tasks-add.tasks-orange { color: #fb6340; }
+.tasks-add.tasks-yellow { color: #ffd600; }
+.tasks-add.tasks-red { color: #f5365c; }
 
-    exportImageButton.addEventListener('click', exportDashboardAsImage);
-});
+.grade-badge.grade-a, .kpi-gauge.grade-a { background: radial-gradient(closest-side, white 79%, transparent 80% 100%), conic-gradient(#2dce89 calc(var(--p) * 1%), #e9ecef 0); color: #2dce89; }
+.grade-badge.grade-b, .kpi-gauge.grade-b { background: radial-gradient(closest-side, white 79%, transparent 80% 100%), conic-gradient(#8fdc8a calc(var(--p) * 1%), #e9ecef 0); color: #8fdc8a; }
+.grade-badge.grade-c, .kpi-gauge.grade-c { background: radial-gradient(closest-side, white 79%, transparent 80% 100%), conic-gradient(#fb6340 calc(var(--p) * 1%), #e9ecef 0); color: #fb6340; }
+.grade-badge.grade-d, .kpi-gauge.grade-d { background: radial-gradient(closest-side, white 79%, transparent 80% 100%), conic-gradient(#ffd600 calc(var(--p) * 1%), #e9ecef 0); color: #ffd600; }
+.grade-badge.grade-f, .kpi-gauge.grade-f { background: radial-gradient(closest-side, white 79%, transparent 80% 100%), conic-gradient(#f5365c calc(var(--p) * 1%), #e9ecef 0); color: #f5365c; }
+
+.kpi-actions {
+    margin-top: 25px;
+    text-align: center;
+}
+.kpi-actions button {
+  background-color: #5e72e4;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 16px;
+  box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
+}
+.kpi-actions button:hover {
+  background-color: #485ac5;
+  box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08);
+  transform: translateY(-1px);
+}
