@@ -25,6 +25,7 @@ h1 {
     box-shadow: none;
     border-bottom: 1px solid #dee2e6;
     margin-bottom: 15px;
+    padding-right: 30px;
 }
 
 /* --- [MODIFIED] Summary Cards --- */
@@ -33,6 +34,7 @@ h1 {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 15px;
     margin-bottom: 20px;
+    padding: 15px;
 }
 .kpi-grid-container.courier-summary .kpi-card {
     background-color: #ffffff;
