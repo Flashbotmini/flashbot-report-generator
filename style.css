@@ -54,14 +54,14 @@ h1 {
 }
 .kpi-grid-container.courier-summary .kpi-card .card-body .problem-total {
     font-size: 1.5em;
-    color: #f5365c;
+    color: #f31212ff;
     font-weight: 700;
 }
 
 /* --- Employee Scorecard Container --- */
 .kpi-card-view-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 15px;
     margin-top: 15px;
     padding: 5px;
@@ -156,7 +156,7 @@ h1 {
     font-weight: 600;
     font-size: 1.1em;
 }
-.kpi-stats .problem-value { color: #f5365c; }
+.kpi-stats .problem-value { color: #f31212ff; }
 
 /* Scorecard Table */
 .scorecard-table {
@@ -178,16 +178,16 @@ h1 {
 .scorecard-table tr:last-child td { border-bottom: none; }
 
 /* Color Classes */
-.tasks-add.tasks-green { color: #4caf0a; }
-.tasks-add.tasks-orange { color: #ff9100; }
+.tasks-add.tasks-green { color: #07801bff; }
+.tasks-add.tasks-orange { color: #f35430ff; }
 .tasks-add.tasks-yellow { color: #ffd600; }
-.tasks-add.tasks-red { color: #ff0000; }
+.tasks-add.tasks-red { color: #f31212ff; }
 
-.grade-badge.grade-a { background-color: #4caf0a; }
-.grade-badge.grade-b { background-color: #7fe03e; color: #333; }
+.grade-badge.grade-a { background-color: #07801bff; }
+.grade-badge.grade-b { background-color: #3ee232ff; color: #333; }
 .grade-badge.grade-c { background-color: #ffd600; color: #333; }
-.grade-badge.grade-d { background-color: #ff9100; }
-.grade-badge.grade-f { background-color: #ff0000; }
+.grade-badge.grade-d { background-color: #f35430ff; }
+.grade-badge.grade-f { background-color: #f31212ff; }
 
 /* Actions Button */
 .kpi-actions {
