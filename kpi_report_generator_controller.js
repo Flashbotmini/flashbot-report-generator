@@ -1,9 +1,18 @@
 // kpi_report_generator_controller.js
 document.addEventListener('DOMContentLoaded', () => {
 
+    const kpiResultContainer = document.getElementById('kpiResultContainer');
     const exportImageButton = document.getElementById('exportImageButton');
     const processTimeDisplay = document.getElementById('processTimeDisplay');
-    const kpiResultContainer = document.getElementById('kpiResultContainer');
+
+    // --- [NEW] ฟังก์ชันสำหรับแสดงข้อมูลบนการ์ดสรุปผล ---
+    function renderSummaryCards(summary) {
+        if (!summary) return;
+        document.getElementById('summary_pri').innerHTML = `<div class="card-main-value">${summary.PRI.avgRate.toFixed(1)}%</div><div class="card-sub-value">${summary.PRI.closed}/${summary.PRI.scanned}</div>`;
+        document.getElementById('summary_tt').innerHTML = `<div class="card-main-value">${summary.TT.avgRate.toFixed(1)}%</div><div class="card-sub-value">${summary.TT.closed}/${summary.TT.scanned}</div>`;
+        document.getElementById('summary_all').innerHTML = `<div class="card-main-value">${summary.ALL.avgRate.toFixed(1)}%</div><div class="card-sub-value">${summary.ALL.closed}/${summary.ALL.scanned}</div>`;
+        document.getElementById('summary_problem').innerHTML = `<span class="problem-total">${summary.problem}</span>`;
+    }
 
     function renderCards(data) {
         if (!kpiResultContainer || !data) return;
@@ -31,7 +40,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="grade-badge ${gradeClass}">${emp.grade}</div>
                 </div>
                 <div class="scorecard-body">
-                    <div class="kpi-gauge ${gradeClass}" style="--p:${allRate.toFixed(1)};"></div>
+                    <div class="kpi-gauge" style="--p:${allRate.toFixed(1)}; --c:${getGradeColor(emp.grade)};">
+                        <div class="gauge-value">${allRate.toFixed(1)}%</div>
+                    </div>
                     <div class="kpi-stats">
                         <div class="stat-item">
                             <span class="label">พัสดุติดปัญหา</span>
@@ -80,6 +91,17 @@ document.addEventListener('DOMContentLoaded', () => {
             default: return '';
         }
     }
+    
+    function getGradeColor(grade) {
+        switch (grade) {
+            case 'A': return '#07801bff';
+            case 'B': return '#3ee232ff';
+            case 'C': return '#ffd600';
+            case 'D': return '#f35430ff';
+            case 'F': return '#f31212ff';
+            default: return '#adb5bd';
+        }
+    }
 
     async function exportDashboardAsImage() {
         const reportElement = document.getElementById('report-content');
@@ -116,6 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const decodedData = JSON.parse(jsonString);
             
             processTimeDisplay.textContent = `วันที่ประมวลผล: ${decodedData.processTime}`;
+            // --- [MODIFIED] เรียกใช้ฟังก์ชัน renderSummaryCards ---
+            renderSummaryCards(decodedData.summaryData); 
             renderCards(decodedData.tableData);
         } catch (e) {
             console.error("ไม่สามารถถอดรหัสข้อมูลได้:", e);
