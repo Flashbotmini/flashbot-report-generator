@@ -5,14 +5,16 @@ body {
   margin: 0;
   background: #f8f9fa;
   color: #495057;
+  padding: 15px;
 }
 
 h1 {
-  font-size: 20px;
+  font-size: 50px;
   color: #343a40;
   margin-bottom: 10px;
   font-weight: 600;
   text-align: center;
+  padding: 15px;
 }
 
 .kpi-header-info {
@@ -64,7 +66,7 @@ h1 {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 15px;
     margin-top: 15px;
-    padding: 5px;
+    padding: 15px;
 }
 .employee-scorecard {
     background-color: #fff;
@@ -76,8 +78,8 @@ h1 {
     flex-direction: column;
     gap: 10px;
     transition: all 0.3s ease;
-    width: 220px;
-    height: 320px;
+    width: 250px;
+    height: 350px;
     box-sizing: border-box;
 }
 .employee-scorecard:hover {
@@ -134,7 +136,7 @@ h1 {
   animation: p 1s 1 forwards;
 }
 .kpi-gauge .gauge-value {
-    font-size: 1.8em;
+    font-size: 1.2em;
     font-weight: 700;
     color: var(--c);
 }
