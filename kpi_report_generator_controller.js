@@ -130,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+    // --- [FIXED] แก้ไขฟังก์ชันนี้ให้จัดการกับ response structure ได้ถูกต้อง ---
     async function getKpiData(cacheId) {
         try {
             const response = await fetch(WEB_APP_URL, {
@@ -138,11 +139,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({ action: 'getKpiDataFromCache', cacheId: cacheId })
             });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             const result = await response.json();
+            console.log('API Response:', result);
+            
             if (result.success) {
                 return result.data;
             } else {
-                throw new Error(result.error);
+                throw new Error(result.error || 'ไม่สามารถดึงข้อมูลจาก Cache ได้');
             }
         } catch (error) {
             console.error('Failed to fetch data from cache:', error);
@@ -154,59 +162,90 @@ document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const cacheId = urlParams.get('id');
 
-        if (cacheId) {
-            const tempLoadingMessage = document.createElement('h1');
-            tempLoadingMessage.textContent = 'กำลังดึงข้อมูลรายงาน...';
-            document.body.appendChild(tempLoadingMessage);
-            
-            try {
-                const reportData = await getKpiData(cacheId);
-                
-                document.body.innerHTML = `
-                    <div class="report-container">
-                        <div id="report-content">
-                            <h1>KPI COURIER SCORECARD</h1>
-                            <div class="kpi-header-info" style="text-align: right; border-bottom: none;">
-                                <span id="processTimeDisplay"></span>
-                            </div>
-                            <div class="kpi-grid-container courier-summary">
-                                <div class="kpi-card" id="summary_pri_card">
-                                    <div class="card-header">PRIORITY</div>
-                                    <div id="summary_pri" class="card-body"></div>
-                                </div>
-                                <div class="kpi-card" id="summary_tt_card">
-                                    <div class="card-header">TIKTOK</div>
-                                    <div id="summary_tt" class="card-body"></div>
-                                </div>
-                                <div class="kpi-card" id="summary_all_card">
-                                    <div class="card-header">ALL</div>
-                                    <div id="summary_all" class="card-body"></div>
-                                </div>
-                                <div class="kpi-card" id="summary_problem_card">
-                                    <div class="card-header">พัสดุติดปัญหา</div>
-                                    <div id="summary_problem" class="card-body"></div>
-                                </div>
-                            </div>
-                            <div id="kpiResultContainer" class="kpi-card-view-container"></div>
-                        </div>
-                        <div class="kpi-actions">
-                            <button id="exportImageButton">บันทึกเป็นรูปภาพ</button>
-                        </div>
-                    </div>`;
-                
-                document.getElementById('processTimeDisplay').textContent = `วันที่ประมวลผล: ${reportData.processTime}`;
-                renderSummaryCards(reportData.summaryData); 
-                renderCards(reportData.tableData);
-                document.getElementById('exportImageButton').addEventListener('click', exportDashboardAsImage);
+        if (!cacheId) {
+            document.body.innerHTML = '<div class="error-message"><h1>ไม่พบ ID สำหรับสร้างรายงาน</h1><p>กรุณาตรวจสอบ URL อีกครั้ง</p></div>';
+            return;
+        }
 
-            } catch (e) {
-                console.error("ไม่สามารถโหลดข้อมูลได้:", e);
-                document.body.innerHTML = `<h1>เกิดข้อผิดพลาด: ${e.message}</h1>`;
+        // แสดงข้อความกำลังโหลด
+        document.body.innerHTML = `
+            <div class="loading-container" style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column;">
+                <h1>กำลังดึงข้อมูลรายงาน...</h1>
+                <p>Cache ID: ${cacheId}</p>
+                <div class="spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;"></div>
+            </div>
+            <style>
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            </style>
+        `;
+        
+        try {
+            const reportData = await getKpiData(cacheId);
+            console.log('Report Data:', reportData);
+            
+            if (!reportData || !reportData.tableData || !reportData.summaryData) {
+                throw new Error('ข้อมูลรายงานไม่สมบูรณ์');
             }
-        } else {
-             document.body.innerHTML = '<h1>ไม่พบ ID สำหรับสร้างรายงาน</h1>';
+            
+            // สร้างหน้า HTML ใหม่
+            document.body.innerHTML = `
+                <div class="report-container">
+                    <div id="report-content">
+                        <h1>KPI COURIER SCORECARD</h1>
+                        <div class="kpi-header-info" style="text-align: right; border-bottom: none;">
+                            <span id="processTimeDisplay"></span>
+                        </div>
+                        <div class="kpi-grid-container courier-summary">
+                            <div class="kpi-card" id="summary_pri_card">
+                                <div class="card-header">PRIORITY</div>
+                                <div id="summary_pri" class="card-body"></div>
+                            </div>
+                            <div class="kpi-card" id="summary_tt_card">
+                                <div class="card-header">TIKTOK</div>
+                                <div id="summary_tt" class="card-body"></div>
+                            </div>
+                            <div class="kpi-card" id="summary_all_card">
+                                <div class="card-header">ALL</div>
+                                <div id="summary_all" class="card-body"></div>
+                            </div>
+                            <div class="kpi-card" id="summary_problem_card">
+                                <div class="card-header">พัสดุติดปัญหา</div>
+                                <div id="summary_problem" class="card-body"></div>
+                            </div>
+                        </div>
+                        <div id="kpiResultContainer" class="kpi-card-view-container"></div>
+                    </div>
+                    <div class="kpi-actions">
+                        <button id="exportImageButton">บันทึกเป็นรูปภาพ</button>
+                    </div>
+                </div>`;
+            
+            // อัปเดตข้อมูลในหน้า
+            document.getElementById('processTimeDisplay').textContent = `วันที่ประมวลผล: ${reportData.processTime}`;
+            renderSummaryCards(reportData.summaryData); 
+            renderCards(reportData.tableData);
+            
+            // เพิ่ม event listener สำหรับปุ่ม export
+            document.getElementById('exportImageButton').addEventListener('click', exportDashboardAsImage);
+            
+            console.log('Report initialized successfully');
+
+        } catch (error) {
+            console.error("ไม่สามารถโหลดข้อมูลได้:", error);
+            document.body.innerHTML = `
+                <div class="error-message" style="text-align: center; padding: 50px;">
+                    <h1>เกิดข้อผิดพลาด</h1>
+                    <p>${error.message}</p>
+                    <p style="color: #666; font-size: 0.9em;">Cache ID: ${cacheId}</p>
+                    <button onclick="window.close()" style="margin-top: 20px; padding: 10px 20px; background-color: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">ปิดหน้าต่าง</button>
+                </div>
+            `;
         }
     }
 
+    // เริ่มต้นรายงาน
     initializeReport();
 });
