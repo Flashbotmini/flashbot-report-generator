@@ -1,11 +1,11 @@
 // kpi_report_generator_controller.js
 document.addEventListener('DOMContentLoaded', () => {
 
-    const kpiResultContainer = document.getElementById('kpiResultContainer');
     const exportImageButton = document.getElementById('exportImageButton');
     const processTimeDisplay = document.getElementById('processTimeDisplay');
+    const kpiResultContainer = document.getElementById('kpiResultContainer');
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwWIcRczMCQGCIjoZZMXcg25AYGqozTi8tpJOIuadW5XwY8ou49G2302z9EnI593wk/exec';
 
-    // --- [NEW] ฟังก์ชันสำหรับแสดงข้อมูลบนการ์ดสรุปผล ---
     function renderSummaryCards(summary) {
         if (!summary) return;
         document.getElementById('summary_pri').innerHTML = `<div class="card-main-value">${summary.PRI.avgRate.toFixed(1)}%</div><div class="card-sub-value">${summary.PRI.closed}/${summary.PRI.scanned}</div>`;
@@ -129,25 +129,84 @@ document.addEventListener('DOMContentLoaded', () => {
             exportImageButton.style.backgroundColor = '#2dce89';
         }
     }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const dataParam = urlParams.get('data');
-    if (dataParam) {
+    
+    async function getKpiData(cacheId) {
         try {
-            const jsonString = decodeURIComponent(escape(atob(dataParam.replace(/ /g, '+'))));
-            const decodedData = JSON.parse(jsonString);
-            
-            processTimeDisplay.textContent = `วันที่ประมวลผล: ${decodedData.processTime}`;
-            // --- [MODIFIED] เรียกใช้ฟังก์ชัน renderSummaryCards ---
-            renderSummaryCards(decodedData.summaryData); 
-            renderCards(decodedData.tableData);
-        } catch (e) {
-            console.error("ไม่สามารถถอดรหัสข้อมูลได้:", e);
-            document.body.innerHTML = '<h1>เกิดข้อผิดพลาด: ไม่สามารถแสดงข้อมูลได้</h1>';
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'getKpiDataFromCache', cacheId: cacheId })
+            });
+            const result = await response.json();
+            if (result.success) {
+                return result.data;
+            } else {
+                throw new Error(result.error);
+            }
+        } catch (error) {
+            console.error('Failed to fetch data from cache:', error);
+            throw error;
         }
-    } else {
-         document.body.innerHTML = '<h1>ไม่พบข้อมูลสำหรับสร้างรายงาน</h1>';
+    }
+    
+    async function initializeReport() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const cacheId = urlParams.get('id');
+
+        if (cacheId) {
+            const tempLoadingMessage = document.createElement('h1');
+            tempLoadingMessage.textContent = 'กำลังดึงข้อมูลรายงาน...';
+            document.body.appendChild(tempLoadingMessage);
+            
+            try {
+                const reportData = await getKpiData(cacheId);
+                
+                document.body.innerHTML = `
+                    <div class="report-container">
+                        <div id="report-content">
+                            <h1>KPI COURIER SCORECARD</h1>
+                            <div class="kpi-header-info" style="text-align: right; border-bottom: none;">
+                                <span id="processTimeDisplay"></span>
+                            </div>
+                            <div class="kpi-grid-container courier-summary">
+                                <div class="kpi-card" id="summary_pri_card">
+                                    <div class="card-header">PRIORITY</div>
+                                    <div id="summary_pri" class="card-body"></div>
+                                </div>
+                                <div class="kpi-card" id="summary_tt_card">
+                                    <div class="card-header">TIKTOK</div>
+                                    <div id="summary_tt" class="card-body"></div>
+                                </div>
+                                <div class="kpi-card" id="summary_all_card">
+                                    <div class="card-header">ALL</div>
+                                    <div id="summary_all" class="card-body"></div>
+                                </div>
+                                <div class="kpi-card" id="summary_problem_card">
+                                    <div class="card-header">พัสดุติดปัญหา</div>
+                                    <div id="summary_problem" class="card-body"></div>
+                                </div>
+                            </div>
+                            <div id="kpiResultContainer" class="kpi-card-view-container"></div>
+                        </div>
+                        <div class="kpi-actions">
+                            <button id="exportImageButton">บันทึกเป็นรูปภาพ</button>
+                        </div>
+                    </div>`;
+                
+                document.getElementById('processTimeDisplay').textContent = `วันที่ประมวลผล: ${reportData.processTime}`;
+                renderSummaryCards(reportData.summaryData); 
+                renderCards(reportData.tableData);
+                document.getElementById('exportImageButton').addEventListener('click', exportDashboardAsImage);
+
+            } catch (e) {
+                console.error("ไม่สามารถโหลดข้อมูลได้:", e);
+                document.body.innerHTML = `<h1>เกิดข้อผิดพลาด: ${e.message}</h1>`;
+            }
+        } else {
+             document.body.innerHTML = '<h1>ไม่พบ ID สำหรับสร้างรายงาน</h1>';
+        }
     }
 
-    exportImageButton.addEventListener('click', exportDashboardAsImage);
+    initializeReport();
 });
