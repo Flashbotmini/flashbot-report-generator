@@ -158,6 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         try {
+            await new Promise(resolve => setTimeout(resolve, 500));
             const canvas = await html2canvas(reportElement, {
                 scale: 2,
                 useCORS: true,
