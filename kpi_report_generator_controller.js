@@ -135,7 +135,115 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function exportDashboardAsImage() {
+    function createCanvasGauge(percentage, color, size = 90) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // ตั้งค่าขนาด canvas (ใช้ device pixel ratio สำหรับความคมชัด)
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
+    canvas.style.width = size + 'px';
+    canvas.style.height = size + 'px';
+    ctx.scale(dpr, dpr);
+    
+    const centerX = size / 2;
+    const centerY = size / 2;
+    const radius = (size - 10) / 2;
+    const lineWidth = 8;
+    
+    // วาดพื้นหลัง (วงกลมสีเทา)
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#e9ecef';
+    ctx.lineWidth = lineWidth;
+    ctx.stroke();
+    
+    // วาด progress (วงกลมสีตามเปอร์เซ็นต์)
+    if (percentage > 0) {
+        ctx.beginPath();
+        const startAngle = -Math.PI / 2; // เริ่มจากตำแหน่ง 12 นาฬิกา
+        const endAngle = startAngle + (2 * Math.PI * percentage / 100);
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = lineWidth;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+    }
+    
+    return canvas;
+}
+
+// ฟังก์ชันสำหรับแทนที่ CSS gauge ด้วย Canvas gauge
+function replaceGaugesWithCanvas() {
+    const gauges = document.querySelectorAll('.kpi-gauge');
+    const replacements = [];
+    
+    gauges.forEach(gauge => {
+        const percentage = parseFloat(gauge.style.getPropertyValue('--p')) || 0;
+        const color = gauge.style.getPropertyValue('--c') || '#e9ecef';
+        const gaugeValue = gauge.querySelector('.gauge-value');
+        
+        // สร้าง canvas gauge
+        const canvas = createCanvasGauge(percentage, color);
+        canvas.className = 'canvas-gauge';
+        canvas.style.borderRadius = '50%';
+        canvas.style.display = 'block';
+        
+        // สร้าง container สำหรับ canvas และ text
+        const container = document.createElement('div');
+        container.className = 'canvas-gauge-container';
+        container.style.cssText = `
+            width: 90px;
+            height: 90px;
+            position: relative;
+            display: grid;
+            place-content: center;
+        `;
+        
+        // สร้าง text overlay
+        const textOverlay = document.createElement('div');
+        textOverlay.className = 'canvas-gauge-text';
+        textOverlay.textContent = gaugeValue ? gaugeValue.textContent : `${percentage.toFixed(1)}%`;
+        textOverlay.style.cssText = `
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2em;
+            font-weight: 700;
+            color: ${color};
+            text-align: center;
+            pointer-events: none;
+            z-index: 1;
+        `;
+        
+        container.appendChild(canvas);
+        container.appendChild(textOverlay);
+        
+        // เก็บข้อมูลสำหรับการกู้คืน
+        replacements.push({
+            original: gauge,
+            replacement: container,
+            parent: gauge.parentNode
+        });
+        
+        // แทนที่ element
+        gauge.parentNode.replaceChild(container, gauge);
+    });
+    
+    return replacements;
+}
+
+// ฟังก์ชันสำหรับกู้คืน gauge เดิม
+function restoreOriginalGauges(replacements) {
+    replacements.forEach(item => {
+        item.parent.replaceChild(item.original, item.replacement);
+    });
+}
+
+// ปรับปรุงฟังก์ชัน exportDashboardAsImage ให้ใช้ Canvas gauge
+async function exportDashboardAsImageWithCanvas() {
     const reportElement = document.getElementById('report-content');
     if (!reportElement) return;
     
@@ -143,89 +251,55 @@ document.addEventListener('DOMContentLoaded', () => {
     button.textContent = 'กำลังสร้างรูปภาพ...';
     button.disabled = true;
 
-    // สร้าง array เพื่อเก็บข้อมูลเดิมของ gauges
-    const originalGaugeStyles = [];
+    let replacements = [];
     
-    // ค้นหา gauges ทั้งหมดและแปลง CSS variables เป็น inline styles
-    const gauges = reportElement.querySelectorAll('.kpi-gauge');
-    gauges.forEach((gauge, index) => {
-        // เก็บ style เดิมไว้
-        originalGaugeStyles[index] = {
-            background: gauge.style.background,
-            animation: gauge.style.animation
-        };
-        
-        // อ่านค่า CSS variables
-        const computedStyle = window.getComputedStyle(gauge);
-        const percentage = parseFloat(gauge.style.getPropertyValue('--p')) || 0;
-        const color = gauge.style.getPropertyValue('--c') || '#e9ecef';
-        
-        // แปลง conic-gradient เป็น inline style ที่ html2canvas เข้าใจได้
-        const backgroundStyle = `radial-gradient(closest-side, white 79%, transparent 80% 100%), conic-gradient(${color} ${percentage}%, #e9ecef 0)`;
-        
-        // กำหนด style ใหม่
-        gauge.style.setProperty('background', backgroundStyle, 'important');
-        gauge.style.setProperty('animation', 'none', 'important');
-        gauge.style.setProperty('border-radius', '50%', 'important');
-        gauge.style.setProperty('width', '90px', 'important');
-        gauge.style.setProperty('height', '90px', 'important');
-        gauge.style.setProperty('display', 'grid', 'important');
-        gauge.style.setProperty('place-content', 'center', 'important');
-        
-        // ปรับ gauge-value ด้วย
-        const gaugeValue = gauge.querySelector('.gauge-value');
-        if (gaugeValue) {
-            gaugeValue.style.setProperty('font-size', '1.2em', 'important');
-            gaugeValue.style.setProperty('font-weight', '700', 'important');
-            gaugeValue.style.setProperty('color', color, 'important');
-            gaugeValue.style.setProperty('text-align', 'center', 'important');
-        }
-    });
-
     try {
-        // รอให้ style ถูกนำไปใช้
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // แทนที่ CSS gauges ด้วย Canvas gauges
+        replacements = replaceGaugesWithCanvas();
+        
+        // รอให้ DOM อัปเดต
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         // สร้าง canvas
         const canvas = await html2canvas(reportElement, {
             scale: 2,
             useCORS: true,
             allowTaint: false,
-            backgroundColor: '#f8f9fa',
-            width: reportElement.scrollWidth,
-            height: reportElement.scrollHeight,
-            scrollX: 0,
-            scrollY: 0,
-            windowWidth: reportElement.scrollWidth,
-            windowHeight: reportElement.scrollHeight,
-            onclone: function(clonedDoc) {
-                // ใน cloned document ให้ปรับ gauges อีกครั้ง
-                const clonedGauges = clonedDoc.querySelectorAll('.kpi-gauge');
-                clonedGauges.forEach((clonedGauge, index) => {
-                    const originalGauge = gauges[index];
-                    if (originalGauge) {
-                        const percentage = parseFloat(originalGauge.style.getPropertyValue('--p')) || 0;
-                        const color = originalGauge.style.getPropertyValue('--c') || '#e9ecef';
-                        
-                        clonedGauge.style.background = `radial-gradient(closest-side, white 79%, transparent 80% 100%), conic-gradient(${color} ${percentage}%, #e9ecef 0)`;
-                        clonedGauge.style.animation = 'none';
-                        clonedGauge.style.borderRadius = '50%';
-                        clonedGauge.style.width = '90px';
-                        clonedGauge.style.height = '90px';
-                        clonedGauge.style.display = 'grid';
-                        clonedGauge.style.placeContent = 'center';
-                        
-                        const clonedGaugeValue = clonedGauge.querySelector('.gauge-value');
-                        if (clonedGaugeValue) {
-                            clonedGaugeValue.style.fontSize = '1.2em';
-                            clonedGaugeValue.style.fontWeight = '700';
-                            clonedGaugeValue.style.color = color;
-                            clonedGaugeValue.style.textAlign = 'center';
-                        }
-                    }
-                });
-            }
+            backgroundColor: '#f8f9fa'
         });
+        
+        // สร้างลิงก์ดาวน์โหลด
+        const link = document.createElement('a');
+        link.download = `kpi_courier_scorecard_${new Date().toISOString().slice(0, 10)}.png`;
+        link.href = canvas.toDataURL("image/png", 1.0);
+        link.click();
+        
+        button.textContent = 'บันทึกเป็นรูปภาพสำเร็จ';
+        button.style.backgroundColor = '#2dce89';
+        
+        setTimeout(() => {
+            button.textContent = 'บันทึกเป็นรูปภาพ';
+            button.style.backgroundColor = '#5e72e4';
+        }, 2000);
+        
+    } catch (err) {
+        console.error("Error creating image:", err);
+        button.textContent = 'เกิดข้อผิดพลาด กรุณาลองใหม่';
+        button.style.backgroundColor = '#f31212ff';
+        
+        setTimeout(() => {
+            button.textContent = 'บันทึกเป็นรูปภาพ';
+            button.style.backgroundColor = '#5e72e4';
+        }, 3000);
+    } finally {
+        button.disabled = false;
+        
+        // กู้คืน gauge เดิม
+        if (replacements.length > 0) {
+            restoreOriginalGauges(replacements);
+        }
+    }
+}
         
         // สร้างลิงก์ดาวน์โหลด
         const link = document.createElement('a');
