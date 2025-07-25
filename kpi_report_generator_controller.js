@@ -143,6 +143,20 @@ document.addEventListener('DOMContentLoaded', () => {
         button.textContent = 'กำลังสร้างรูปภาพ...';
         button.disabled = true;
 
+            // ทำให้แน่ใจว่า Gauge แสดงผลเต็มที่ก่อน export
+        const gauges = reportElement.querySelectorAll('.kpi-gauge');
+        gauges.forEach(gauge => {
+            // นำค่า custom properties '--p' และ '--c' มาใช้โดยตรง
+            const percentage = gauge.style.getPropertyValue('--p');
+            const color = gauge.style.getPropertyValue('--c');
+            
+            // กำหนด background แบบเต็มทันทีโดยไม่มี animation
+            gauge.style.background = `radial-gradient(closest-side, white 79%, transparent 80% 100%), conic-gradient(${color} ${percentage}%, #e9ecef 0)`;
+            
+            // ทำให้ animation หยุดทำงานชั่วคราว
+            gauge.style.animation = 'none';
+        });
+
         try {
             const canvas = await html2canvas(reportElement, {
                 scale: 2,
@@ -160,6 +174,11 @@ document.addEventListener('DOMContentLoaded', () => {
             button.textContent = 'บันทึกเป็นรูปภาพ';
         } finally {
             button.disabled = false;
+            // คืนค่า animation ให้ Gauge เหมือนเดิม
+            gauges.forEach(gauge => {
+                gauge.style.animation = ''; // หรือ 'p 1s 1 forwards' ตามที่กำหนดไว้
+                // ไม่จำเป็นต้องลบ style.background เพราะจะถูก override ด้วย class เดิมเมื่อมีการ render ใหม่
+            });
         }
     }
     
