@@ -34,7 +34,7 @@ h1 {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 15px;
     margin-bottom: 20px;
-    padding: 15px;
+    padding-left: 15px;
 }
 .kpi-grid-container.courier-summary .kpi-card {
     background-color: #ffffff;
@@ -214,4 +214,65 @@ h1 {
     background-color: #485ac5;
     box-shadow: 0 4px 8px rgba(50, 50, 93, .1), 0 1px 4px rgba(0, 0, 0, .08);
     transform: translateY(-1px);
+}
+/* Fallback styles for better html2canvas compatibility */
+.kpi-gauge {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: grid;
+  place-content: center;
+  position: relative;
+  background: radial-gradient(closest-side, white 79%, transparent 80% 100%),
+              conic-gradient(var(--c) calc(var(--p) * 1%), #e9ecef 0);
+  animation: p 1s 1 forwards;
+  
+  /* เพิ่ม fallback สำหรับ browsers ที่ไม่รองรับ CSS custom properties */
+  background-color: #e9ecef;
+  border: 3px solid var(--c, #e9ecef);
+}
+
+/* เพิ่ม class สำหรับ export mode */
+.kpi-gauge.export-mode {
+  animation: none !important;
+  background: var(--gauge-bg, radial-gradient(closest-side, white 79%, transparent 80% 100%), conic-gradient(#e9ecef 0%, #e9ecef 100%)) !important;
+}
+
+.kpi-gauge .gauge-value {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--c);
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 0 3px rgba(255,255,255,0.8);
+}
+
+/* Specific gauge colors for better compatibility */
+.kpi-gauge[style*="--c:#07801bff"] {
+  --gauge-color: #07801bff;
+}
+.kpi-gauge[style*="--c:#3ee232ff"] {
+  --gauge-color: #3ee232ff;
+}
+.kpi-gauge[style*="--c:#ffd600"] {
+  --gauge-color: #ffd600;
+}
+.kpi-gauge[style*="--c:#f35430ff"] {
+  --gauge-color: #f35430ff;
+}
+.kpi-gauge[style*="--c:#f31212ff"] {
+  --gauge-color: #f31212ff;
+}
+
+@keyframes p { 
+  from {--p: 0} 
+}
+
+/* เพิ่ม print styles */
+@media print {
+  .kpi-gauge {
+    -webkit-print-color-adjust: exact;
+    color-scheme: exact;
+    print-color-adjust: exact;
+  }
 }
