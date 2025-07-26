@@ -124,18 +124,31 @@ h1 {
     gap: 5px;
     flex-grow: 1;
 }
-.kpi-gauge {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  display: grid;
-  place-content: center;
-  position: relative;
-  /* background property will be set by JavaScript */
+/* --- [NEW] SVG Gauge Styles --- */
+.kpi-gauge-container {
+    width: 90px;
+    height: 90px;
 }
-.kpi-gauge .gauge-value {
-    font-size: 1.2em;
+
+.gauge-svg {
+    transform: rotate(-90deg); /* ทำให้เริ่มจากด้านบน */
+}
+
+.gauge-svg .gauge-background {
+    fill: none;
+    stroke: #e9ecef;
+}
+
+.gauge-svg .gauge-progress {
+    fill: none;
+    stroke-linecap: round; /* ทำให้ปลายเส้นโค้งมน */
+    transition: stroke-dashoffset 0.5s ease-out;
+}
+
+.gauge-svg .gauge-text {
+    font-size: 22px;
     font-weight: 700;
+    transform: rotate(90deg); /* หมุนตัวอักษรกลับมาแนวปกติ */
 }
 @keyframes p { from {--p: 0} }
 
