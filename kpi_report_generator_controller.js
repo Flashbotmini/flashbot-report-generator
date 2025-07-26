@@ -29,7 +29,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // js/kpi_report_generator_controller.js
+function createGaugeSVG(percentage, color) {
+    const size = 90;
+    const strokeWidth = 10;
+    const center = size / 2;
+    const radius = center - strokeWidth / 2;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference * (1 - (percentage / 100));
+
+    return `
+        <svg class="gauge-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+            <circle class="gauge-background" cx="${center}" cy="${center}" r="${radius}" stroke-width="${strokeWidth}"></circle>
+            <circle class="gauge-progress" cx="${center}" cy="${center}" r="${radius}" stroke-width="${strokeWidth}"
+                    stroke-dasharray="${circumference}"
+                    stroke-dashoffset="${offset}"
+                    style="stroke: ${color};">
+            </circle>
+            <text class="gauge-text" x="50%" y="50%" dy=".3em" text-anchor="middle" style="fill: ${color};">
+                ${percentage.toFixed(1)}%
+            </text>
+        </svg>
+    `;
+}   
+
+// js/kpi_report_generator_controller.js
 
 function renderCards(data) {
     const kpiResultContainer = document.getElementById('kpiResultContainer');
@@ -50,14 +73,11 @@ function renderCards(data) {
     data.forEach((emp, index) => {
         if (!emp || !emp.types || !Array.isArray(emp.types)) {
             console.error(`Invalid employee data at index ${index}:`, emp);
-            return; // ข้ามข้อมูลที่ไม่ถูกต้อง
+            return;
         }
 
         const gradeClass = getGradeColorClass(emp.grade);
         const gradeColor = getGradeColor(emp.grade);
-
-        // --- [MODIFIED] ---
-        // เพิ่ม gradeClass เข้าไปใน class ของ card โดยตรง
         const card = document.createElement('div');
         card.className = `employee-scorecard ${gradeClass}`;
 
@@ -66,12 +86,10 @@ function renderCards(data) {
         if (allData && allData.rate) {
             allRate = typeof allData.rate === 'string' ? parseFloat(allData.rate.replace('%', '')) : allData.rate;
         }
-        
-        // --- [FIXED] ---
-        // สร้าง Style ของ Gauge ด้วย JavaScript เพื่อแก้ปัญหา html2canvas
-        const gaugeStyle = `background: radial-gradient(closest-side, white 79%, transparent 80% 100%), conic-gradient(${gradeColor} ${allRate.toFixed(1)}%, #e9ecef 0);`;
-        const gaugeValueStyle = `color: ${gradeColor};`;
 
+        // --- [MODIFIED] ---
+        // เรียกใช้ฟังก์ชันสร้าง SVG gauge
+        const gaugeHTML = createGaugeSVG(allRate, gradeColor);
 
         card.innerHTML = `
             <div class="scorecard-header">
@@ -82,8 +100,8 @@ function renderCards(data) {
                 <div class="grade-badge ${gradeClass}">${emp.grade || 'N/A'}</div>
             </div>
             <div class="scorecard-body">
-                <div class="kpi-gauge" style="${gaugeStyle}">
-                    <div class="gauge-value" style="${gaugeValueStyle}">${allRate.toFixed(1)}%</div>
+                <div class="kpi-gauge-container">
+                    ${gaugeHTML}
                 </div>
                 <div class="kpi-stats">
                     <div class="stat-item">
