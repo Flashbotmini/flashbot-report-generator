@@ -125,13 +125,10 @@ h1 {
     flex-grow: 1;
 }
 /* --- [NEW] SVG Gauge Styles --- */
+/* --- [FIXED] SVG Gauge Styles --- */
 .kpi-gauge-container {
     width: 90px;
     height: 90px;
-}
-
-.gauge-svg {
-    transform: rotate(-90deg); /* ทำให้เริ่มจากด้านบน */
 }
 
 .gauge-svg .gauge-background {
@@ -141,14 +138,16 @@ h1 {
 
 .gauge-svg .gauge-progress {
     fill: none;
-    stroke-linecap: round; /* ทำให้ปลายเส้นโค้งมน */
+    stroke-linecap: round;
     transition: stroke-dashoffset 0.5s ease-out;
+    transform: rotate(-90deg); /* Moved rotation to the circle */
+    transform-origin: center;   /* Set the rotation point to the center */
 }
 
 .gauge-svg .gauge-text {
     font-size: 22px;
     font-weight: 700;
-    transform: rotate(90deg); /* หมุนตัวอักษรกลับมาแนวปกติ */
+    /* No rotation needed anymore */
 }
 @keyframes p { from {--p: 0} }
 
