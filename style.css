@@ -212,17 +212,17 @@ h1 {
 }
 /* --- Grade-based Card Colors --- */
 .employee-scorecard.grade-a {
-    border-top: 5px solid #07801bff;
+    border: 5px solid #07801bff;
 }
 .employee-scorecard.grade-b {
-    border-top: 5px solid #3ee232ff;
+    border: 5px solid #3ee232ff;
 }
 .employee-scorecard.grade-c {
-    border-top: 5px solid #ffd600;
+    border: 5px solid #ffd600;
 }
 .employee-scorecard.grade-d {
-    border-top: 5px solid #f35430ff;
+    border: 5px solid #f35430ff;
 }
 .employee-scorecard.grade-f {
-    border-top: 5px solid #f31212ff;
+    border: 5px solid #f31212ff;
 }
