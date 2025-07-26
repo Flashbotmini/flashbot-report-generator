@@ -29,79 +29,92 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderCards(data) {
-        const kpiResultContainer = document.getElementById('kpiResultContainer');
-        console.log('renderCards called with data:', data);
-        if (!kpiResultContainer) {
-            console.error('kpiResultContainer element not found');
-            return;
-        }
-        if (!data || !Array.isArray(data) || data.length === 0) {
-            console.warn('Data for cards is invalid or empty');
-            kpiResultContainer.innerHTML = '<p style="text-align: center; color: #666;">ไม่พบข้อมูลสำหรับแสดงผล</p>';
-            return;
-        }
+    // js/kpi_report_generator_controller.js
 
-        console.log(`Rendering ${data.length} employee cards`);
-        kpiResultContainer.innerHTML = '';
-
-        data.forEach((emp, index) => {
-            if (!emp || !emp.types || !Array.isArray(emp.types)) {
-                console.error(`Invalid employee data at index ${index}:`, emp);
-                return; // ข้ามข้อมูลที่ไม่ถูกต้อง
-            }
-            const card = document.createElement('div');
-            card.className = 'employee-scorecard';
-            const allData = emp.types.find(t => t.type === 'รวมทั้งหมด' || t.type === 'ALL' || t.type === 'Total');
-            let allRate = 0;
-            if (allData && allData.rate) {
-                allRate = typeof allData.rate === 'string' ? parseFloat(allData.rate.replace('%', '')) : allData.rate;
-            }
-            const gradeClass = getGradeColorClass(emp.grade);
-            const gradeColor = getGradeColor(emp.grade);
-
-            card.innerHTML = `
-                <div class="scorecard-header">
-                    <div class="employee-info">
-                        <h3>${emp.name || 'ไม่ระบุชื่อ'}</h3>
-                        <p>ID: ${emp.id || 'N/A'} | Login: ${emp.loginTime || 'N/A'}</p>
-                    </div>
-                    <div class="grade-badge ${gradeClass}">${emp.grade || 'N/A'}</div>
-                </div>
-                <div class="scorecard-body">
-                    <div class="kpi-gauge" style="--p:${allRate.toFixed(1)}; --c:${gradeColor};">
-                        <div class="gauge-value">${allRate.toFixed(1)}%</div>
-                    </div>
-                    <div class="kpi-stats">
-                        <div class="stat-item">
-                            <span class="label">พัสดุติดปัญหา</span>
-                            <span class="value problem-value">${emp.problemParcels || 0}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="label">ต้องทำเพิ่ม</span>
-                            <span class="value tasks-add ${getTasksColorClass(emp.tasksToAdd || 0)}">${emp.tasksToAdd || 0}</span>
-                        </div>
-                    </div>
-                </div>
-                <table class="scorecard-table">
-                    <thead>
-                        <tr><th>ประเภท</th><th>สแกน</th><th>ปิดงาน</th><th>% ปิดงาน</th></tr>
-                    </thead>
-                    <tbody>
-                        ${emp.types.map(typeData => `
-                            <tr>
-                                <td>${typeData.type || 'N/A'}</td>
-                                <td>${typeData.scanned || 0}</td>
-                                <td>${typeData.closed || 0}</td>
-                                <td>${typeData.rate || '0%'}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-            kpiResultContainer.appendChild(card);
-        });
+function renderCards(data) {
+    const kpiResultContainer = document.getElementById('kpiResultContainer');
+    console.log('renderCards called with data:', data);
+    if (!kpiResultContainer) {
+        console.error('kpiResultContainer element not found');
+        return;
     }
+    if (!data || !Array.isArray(data) || data.length === 0) {
+        console.warn('Data for cards is invalid or empty');
+        kpiResultContainer.innerHTML = '<p style="text-align: center; color: #666;">ไม่พบข้อมูลสำหรับแสดงผล</p>';
+        return;
+    }
+
+    console.log(`Rendering ${data.length} employee cards`);
+    kpiResultContainer.innerHTML = '';
+
+    data.forEach((emp, index) => {
+        if (!emp || !emp.types || !Array.isArray(emp.types)) {
+            console.error(`Invalid employee data at index ${index}:`, emp);
+            return; // ข้ามข้อมูลที่ไม่ถูกต้อง
+        }
+
+        const gradeClass = getGradeColorClass(emp.grade);
+        const gradeColor = getGradeColor(emp.grade);
+
+        // --- [MODIFIED] ---
+        // เพิ่ม gradeClass เข้าไปใน class ของ card โดยตรง
+        const card = document.createElement('div');
+        card.className = `employee-scorecard ${gradeClass}`;
+
+        const allData = emp.types.find(t => t.type === 'รวมทั้งหมด' || t.type === 'ALL' || t.type === 'Total');
+        let allRate = 0;
+        if (allData && allData.rate) {
+            allRate = typeof allData.rate === 'string' ? parseFloat(allData.rate.replace('%', '')) : allData.rate;
+        }
+        
+        // --- [FIXED] ---
+        // สร้าง Style ของ Gauge ด้วย JavaScript เพื่อแก้ปัญหา html2canvas
+        const gaugeStyle = `background: radial-gradient(closest-side, white 79%, transparent 80% 100%), conic-gradient(${gradeColor} ${allRate.toFixed(1)}%, #e9ecef 0);`;
+        const gaugeValueStyle = `color: ${gradeColor};`;
+
+
+        card.innerHTML = `
+            <div class="scorecard-header">
+                <div class="employee-info">
+                    <h3>${emp.name || 'ไม่ระบุชื่อ'}</h3>
+                    <p>ID: ${emp.id || 'N/A'} | Login: ${emp.loginTime || 'N/A'}</p>
+                </div>
+                <div class="grade-badge ${gradeClass}">${emp.grade || 'N/A'}</div>
+            </div>
+            <div class="scorecard-body">
+                <div class="kpi-gauge" style="${gaugeStyle}">
+                    <div class="gauge-value" style="${gaugeValueStyle}">${allRate.toFixed(1)}%</div>
+                </div>
+                <div class="kpi-stats">
+                    <div class="stat-item">
+                        <span class="label">พัสดุติดปัญหา</span>
+                        <span class="value problem-value">${emp.problemParcels || 0}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="label">ต้องทำเพิ่ม</span>
+                        <span class="value tasks-add ${getTasksColorClass(emp.tasksToAdd || 0)}">${emp.tasksToAdd || 0}</span>
+                    </div>
+                </div>
+            </div>
+            <table class="scorecard-table">
+                <thead>
+                    <tr><th>ประเภท</th><th>สแกน</th><th>ปิดงาน</th><th>% ปิดงาน</th></tr>
+                </thead>
+                <tbody>
+                    ${emp.types.map(typeData => `
+                        <tr>
+                            <td>${typeData.type || 'N/A'}</td>
+                            <td>${typeData.scanned || 0}</td>
+                            <td>${typeData.closed || 0}</td>
+                            <td>${typeData.rate || '0%'}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+        kpiResultContainer.appendChild(card);
+    });
+}
 
     function getTasksColorClass(value) {
         const numValue = typeof value === 'string' ? parseFloat(value) : value;
