@@ -45,7 +45,7 @@ function createGaugeSVG(percentage, color) {
                     stroke-dashoffset="${offset}"
                     style="stroke: ${color};">
             </circle>
-            <text class="gauge-text" x="50%" y="50%" dy=".3em" text-anchor="middle" style="fill: ${color};">
+            <text class="gauge-text" x="50%" y="-50%" dy=".3em" text-anchor="middle" style="fill: ${color};">
                 ${percentage.toFixed(1)}%
             </text>
         </svg>
