@@ -185,7 +185,6 @@ function renderCards(data) {
             link.href = canvas.toDataURL("image/png", 1.0);
             link.click();
             button.textContent = 'บันทึกเป็นรูปภาพสำเร็จ';
-            button.style.backgroundColor = '#2dce89';
         } catch (err) {
             console.error("Error creating image:", err);
             button.textContent = 'บันทึกเป็นรูปภาพ';
