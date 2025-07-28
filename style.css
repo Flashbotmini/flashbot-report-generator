@@ -183,7 +183,7 @@ h1 {
 }
 .scorecard-table th {
     font-weight: 600;
-    color: #8898aa;
+    color: #000000;
     font-size: 0.7em;
 }
 .scorecard-table tr:last-child td { border-bottom: none; }
