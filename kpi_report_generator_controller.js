@@ -124,7 +124,7 @@ function renderCards(data) {
                             <td>${typeData.type || 'N/A'}</td>
                             <td>${typeData.scanned || 0}</td>
                             <td>${typeData.closed || 0}</td>
-                            <td>${typeData.rate || '0%'}%</td>
+                            <td>${typeData.rate || '0%'} %</td>
                         </tr>
                     `).join('')}
                 </tbody>
@@ -268,4 +268,5 @@ function renderCards(data) {
     // เริ่มต้นกระบวนการ
     initializeReport();
 });
+
 
