@@ -46,7 +46,7 @@ h1 {
 }
 .kpi-grid-container.courier-summary .kpi-card .card-header {
     font-size: 1.5em;
-    color: #d11515;
+    color: #157ECC;
     margin-bottom: 8px;
     font-weight: 600;
     text-transform: uppercase;
@@ -238,3 +238,4 @@ h1 {
 .employee-scorecard.grade-f {
     border: 5px solid #f31212ff;
 }
+
