@@ -1,20 +1,20 @@
 /* css/style.css (สำหรับหน้า GitHub Pages Scorecard) */
 
 body {
-  font-family: 'Prompt', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  background: #f8f9fa;
-  color: #000000;
-  padding: 15px;
+    font-family: 'Prompt', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background: #f8f9fa;
+    color: #000000;
+    padding: 15px;
 }
 
 h1 {
-  font-size: 50px;
-  color: #000000;
-  margin-bottom: 10px;
-  font-weight: 600;
-  text-align: center;
-  padding: 15px;
+    font-size: 50px;
+    color: #000000;
+    margin-bottom: 10px;
+    font-weight: 600;
+    text-align: center;
+    padding: 15px;
 }
 
 .kpi-header-info {
@@ -36,6 +36,7 @@ h1 {
     margin-bottom: 20px;
     padding-left: 15px;
 }
+
 .kpi-grid-container.courier-summary .kpi-card {
     background-color: #ffffff;
     border-radius: 12px;
@@ -44,18 +45,21 @@ h1 {
     border: 1px solid #e9ecef;
     text-align: left;
 }
+
 .kpi-grid-container.courier-summary .kpi-card .card-header {
-    font-size: 1.5em;
-    color: #157ECC;
+    font-size: 0.9em;
+    color: #000000;
     margin-bottom: 8px;
     font-weight: 600;
     text-transform: uppercase;
 }
+
 .kpi-grid-container.courier-summary .kpi-card .card-body {
     font-size: 1.1em;
     font-weight: 700;
     color: #000000;
 }
+
 .kpi-grid-container.courier-summary .kpi-card .card-body .problem-total {
     font-size: 1.5em;
     color: #f31212ff;
@@ -70,6 +74,7 @@ h1 {
     margin-top: 15px;
     padding: 15px;
 }
+
 .employee-scorecard {
     background-color: #fff;
     border-radius: 8px;
@@ -84,6 +89,7 @@ h1 {
     height: 350px;
     box-sizing: border-box;
 }
+
 .employee-scorecard:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 20px -5px rgba(150, 170, 180, 0.7);
@@ -96,17 +102,69 @@ h1 {
     align-items: flex-start;
     margin-bottom: 5px;
 }
+
+/* [NEW] Ranking Badge Styles */
+.ranking-badge {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8em;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+}
+
+.ranking-badge.rank-1st {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border: 2px solid #FFD700;
+    animation: pulse-gold 2s infinite;
+}
+
+.ranking-badge.rank-2nd {
+    background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
+    border: 2px solid #C0C0C0;
+}
+
+.ranking-badge.rank-3rd {
+    background: linear-gradient(135deg, #CD7F32, #B87333);
+    border: 2px solid #CD7F32;
+}
+
+.ranking-badge.rank-other {
+    background: linear-gradient(135deg, #8E8E93, #6D6D70);
+    border: 2px solid #8E8E93;
+}
+
+@keyframes pulse-gold {
+    0% {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15), 0 0 0 0 rgba(255, 215, 0, 0.7);
+    }
+    70% {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15), 0 0 0 8px rgba(255, 215, 0, 0);
+    }
+    100% {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15), 0 0 0 0 rgba(255, 215, 0, 0);
+    }
+}
+
 .scorecard-header .employee-info h3 {
     margin: 0;
     font-size: 1em;
     color: #343a40;
     font-weight: 600;
 }
+
 .scorecard-header .employee-info p {
     margin: 2px 0 0;
     font-size: 0.7em;
     color: #000000;
 }
+
 .scorecard-header .grade-badge {
     font-size: 0.7em;
     font-weight: bold;
@@ -114,6 +172,7 @@ h1 {
     border-radius: 10px;
     text-transform: uppercase;
     color: white;
+    flex-shrink: 0;
 }
 
 /* Scorecard Body (Gauge & Stats) */
@@ -124,6 +183,7 @@ h1 {
     gap: 5px;
     flex-grow: 1;
 }
+
 /* --- [NEW] SVG Gauge Styles --- */
 /* --- [FIXED] SVG Gauge Styles --- */
 .kpi-gauge-container {
@@ -140,8 +200,10 @@ h1 {
     fill: none;
     stroke-linecap: round;
     transition: stroke-dashoffset 0.5s ease-out;
-    transform: rotate(-90deg); /* Moved rotation to the circle */
-    transform-origin: center;   /* Set the rotation point to the center */
+    transform: rotate(-90deg);
+    /* Moved rotation to the circle */
+    transform-origin: center;
+    /* Set the rotation point to the center */
 }
 
 .gauge-svg .gauge-text {
@@ -149,7 +211,12 @@ h1 {
     font-weight: 700;
     /* No rotation needed anymore */
 }
-@keyframes p { from {--p: 0} }
+
+@keyframes p {
+    from {
+        --p: 0
+    }
+}
 
 .kpi-stats {
     display: flex;
@@ -157,17 +224,22 @@ h1 {
     gap: 10px;
     text-align: left;
 }
+
 .kpi-stats .stat-item .label {
     display: block;
     font-size: 0.75em;
     color: #000000;
     margin-bottom: 2px;
 }
+
 .kpi-stats .stat-item .value {
     font-weight: 600;
     font-size: 1.1em;
 }
-.kpi-stats .problem-value { color: #f31212ff; }
+
+.kpi-stats .problem-value {
+    color: #f31212ff;
+}
 
 /* Scorecard Table */
 .scorecard-table {
@@ -175,36 +247,70 @@ h1 {
     border-collapse: collapse;
     margin-top: 5px;
 }
-.scorecard-table th, .scorecard-table td {
+
+.scorecard-table th,
+.scorecard-table td {
     text-align: center;
     padding: 5px;
     font-size: 0.75em;
     border-bottom: 1px solid #e9ecef;
 }
+
 .scorecard-table th {
     font-weight: 600;
     color: #000000;
     font-size: 0.7em;
 }
-.scorecard-table tr:last-child td { border-bottom: none; }
+
+.scorecard-table tr:last-child td {
+    border-bottom: none;
+}
 
 /* Color Classes */
-.tasks-add.tasks-green { color: #07801bff; }
-.tasks-add.tasks-orange { color: #f35430ff; }
-.tasks-add.tasks-yellow { color: #ffd600; }
-.tasks-add.tasks-red { color: #f31212ff; }
+.tasks-add.tasks-green {
+    color: #07801bff;
+}
 
-.grade-badge.grade-a { background-color: #07801bff; }
-.grade-badge.grade-b { background-color: #3ee232ff; color: #333; }
-.grade-badge.grade-c { background-color: #ffd600; color: #333; }
-.grade-badge.grade-d { background-color: #f35430ff; }
-.grade-badge.grade-f { background-color: #f31212ff; }
+.tasks-add.tasks-orange {
+    color: #f35430ff;
+}
+
+.tasks-add.tasks-yellow {
+    color: #ffd600;
+}
+
+.tasks-add.tasks-red {
+    color: #f31212ff;
+}
+
+.grade-badge.grade-a {
+    background-color: #07801bff;
+}
+
+.grade-badge.grade-b {
+    background-color: #3ee232ff;
+    color: #333;
+}
+
+.grade-badge.grade-c {
+    background-color: #ffd600;
+    color: #333;
+}
+
+.grade-badge.grade-d {
+    background-color: #f35430ff;
+}
+
+.grade-badge.grade-f {
+    background-color: #f31212ff;
+}
 
 /* Actions Button */
 .kpi-actions {
     margin-top: 15px;
     text-align: center;
 }
+
 .kpi-actions button {
     background-color: #5e72e4;
     color: white;
@@ -217,25 +323,30 @@ h1 {
     font-size: 0.8em;
     box-shadow: 0 2px 4px rgba(50, 50, 93, .11), 0 1px 2px rgba(0, 0, 0, .08);
 }
+
 .kpi-actions button:hover {
     background-color: #485ac5;
     box-shadow: 0 4px 8px rgba(50, 50, 93, .1), 0 1px 4px rgba(0, 0, 0, .08);
     transform: translateY(-1px);
 }
+
 /* --- Grade-based Card Colors --- */
 .employee-scorecard.grade-a {
     border: 5px solid #07801bff;
 }
+
 .employee-scorecard.grade-b {
     border: 5px solid #3ee232ff;
 }
+
 .employee-scorecard.grade-c {
     border: 5px solid #ffd600;
 }
+
 .employee-scorecard.grade-d {
     border: 5px solid #f35430ff;
 }
+
 .employee-scorecard.grade-f {
     border: 5px solid #f31212ff;
 }
-
