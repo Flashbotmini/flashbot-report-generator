@@ -120,24 +120,24 @@ h1 {
 }
 
 .ranking-badge.rank-1st {
-    background: linear-gradient(135deg, #FFD700, #FFA500);
+    background: linear-gradient(135deg, #ffea7a, #FFA500);
     border: 2px solid #FFD700;
     animation: pulse-gold 2s infinite;
 }
 
 .ranking-badge.rank-2nd {
-    background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
+    background: linear-gradient(135deg, #e9e3e3, #A0A0A0);
     border: 2px solid #C0C0C0;
 }
 
 .ranking-badge.rank-3rd {
-    background: linear-gradient(135deg, #CD7F32, #B87333);
+    background: linear-gradient(135deg, #ffc285, #B87333);
     border: 2px solid #CD7F32;
 }
 
 .ranking-badge.rank-other {
-    background: linear-gradient(135deg, #8E8E93, #6D6D70);
-    border: 2px solid #8E8E93;
+    background: linear-gradient(135deg, #bfb15a, #393208);
+    border: 2px solid #bfb15a;
 }
 
 @keyframes pulse-gold {
@@ -350,3 +350,4 @@ h1 {
 .employee-scorecard.grade-f {
     border: 5px solid #f31212ff;
 }
+
