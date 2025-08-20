@@ -29,15 +29,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-function createGaugeSVG(percentage, color) {
-    const size = 90;
-    const strokeWidth = 10;
-    const center = size / 2;
-    const radius = center - strokeWidth / 2;
-    const circumference = 2 * Math.PI * radius;
-    const offset = circumference * (1 - (percentage / 100));
+    function createGaugeSVG(percentage, color) {
+        const size = 90;
+        const strokeWidth = 10;
+        const center = size / 2;
+        const radius = center - strokeWidth / 2;
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference * (1 - (percentage / 100));
 
-    return `
+        return `
         <svg class="gauge-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
             <circle class="gauge-background" cx="${center}" cy="${center}" r="${radius}" stroke-width="${strokeWidth}"></circle>
             <circle class="gauge-progress" cx="${center}" cy="${center}" r="${radius}" stroke-width="${strokeWidth}"
@@ -45,54 +45,78 @@ function createGaugeSVG(percentage, color) {
                     stroke-dashoffset="${offset}"
                     style="stroke: ${color};">
             </circle>
-            <text class="gauge-text" x="50%" y="50%" dy=".3em" text-anchor="middle" style="fill: ${color};">
+            <text class="gauge-text" x="50%" y="-50%" dy=".3em" text-anchor="middle" style="fill: ${color};">
                 ${percentage.toFixed(1)}%
             </text>
         </svg>
     `;
-}   
-
-// js/kpi_report_generator_controller.js
-
-function renderCards(data) {
-    const kpiResultContainer = document.getElementById('kpiResultContainer');
-    console.log('renderCards called with data:', data);
-    if (!kpiResultContainer) {
-        console.error('kpiResultContainer element not found');
-        return;
-    }
-    if (!data || !Array.isArray(data) || data.length === 0) {
-        console.warn('Data for cards is invalid or empty');
-        kpiResultContainer.innerHTML = '<p style="text-align: center; color: #666;">ไม่พบข้อมูลสำหรับแสดงผล</p>';
-        return;
     }
 
-    console.log(`Rendering ${data.length} employee cards`);
-    kpiResultContainer.innerHTML = '';
+    // [NEW] ฟังก์ชันสร้าง Ranking Badge
+    function createRankingBadge(ranking) {
+        let badgeClass = 'ranking-badge ';
+        switch (ranking) {
+            case 1:
+                badgeClass += 'rank-1st'; // ทอง
+                break;
+            case 2:
+                badgeClass += 'rank-2nd'; // เงิน
+                break;
+            case 3:
+                badgeClass += 'rank-3rd'; // ทองแดง
+                break;
+            default:
+                badgeClass += 'rank-other'; // เทา
+                break;
+        }
+        return `<div class="${badgeClass}">#${ranking}</div>`;
+    }
 
-    data.forEach((emp, index) => {
-        if (!emp || !emp.types || !Array.isArray(emp.types)) {
-            console.error(`Invalid employee data at index ${index}:`, emp);
+    // js/kpi_report_generator_controller.js
+
+    function renderCards(data) {
+        const kpiResultContainer = document.getElementById('kpiResultContainer');
+        console.log('renderCards called with data:', data);
+        if (!kpiResultContainer) {
+            console.error('kpiResultContainer element not found');
+            return;
+        }
+        if (!data || !Array.isArray(data) || data.length === 0) {
+            console.warn('Data for cards is invalid or empty');
+            kpiResultContainer.innerHTML = '<p style="text-align: center; color: #666;">ไม่พบข้อมูลสำหรับแสดงผล</p>';
             return;
         }
 
-        const gradeClass = getGradeColorClass(emp.grade);
-        const gradeColor = getGradeColor(emp.grade);
-        const card = document.createElement('div');
-        card.className = `employee-scorecard ${gradeClass}`;
+        console.log(`Rendering ${data.length} employee cards`);
+        kpiResultContainer.innerHTML = '';
 
-        const allData = emp.types.find(t => t.type === 'รวมทั้งหมด' || t.type === 'ALL' || t.type === 'Total');
-        let allRate = 0;
-        if (allData && allData.rate) {
-            allRate = typeof allData.rate === 'string' ? parseFloat(allData.rate.replace('%', '')) : allData.rate;
-        }
+        data.forEach((emp, index) => {
+            if (!emp || !emp.types || !Array.isArray(emp.types)) {
+                console.error(`Invalid employee data at index ${index}:`, emp);
+                return;
+            }
 
-        // --- [MODIFIED] ---
-        // เรียกใช้ฟังก์ชันสร้าง SVG gauge
-        const gaugeHTML = createGaugeSVG(allRate, gradeColor);
+            const gradeClass = getGradeColorClass(emp.grade);
+            const gradeColor = getGradeColor(emp.grade);
+            const card = document.createElement('div');
+            card.className = `employee-scorecard ${gradeClass}`;
 
-        card.innerHTML = `
+            const allData = emp.types.find(t => t.type === 'รวมทั้งหมด' || t.type === 'ALL' || t.type === 'Total');
+            let allRate = 0;
+            if (allData && allData.rate) {
+                allRate = typeof allData.rate === 'string' ? parseFloat(allData.rate.replace('%', '')) : allData.rate;
+            }
+
+            // --- [MODIFIED] ---
+            // เรียกใช้ฟังก์ชันสร้าง SVG gauge
+            const gaugeHTML = createGaugeSVG(allRate, gradeColor);
+            
+            // [NEW] เพิ่มตัวเลขลำดับ (index + 1 เพราะเริ่มจาก 0)
+            const rankingHTML = createRankingBadge(index + 1);
+
+            card.innerHTML = `
             <div class="scorecard-header">
+                ${rankingHTML}
                 <div class="employee-info">
                     <h3>${emp.name || 'ไม่ระบุชื่อ'}</h3>
                     <p>ID: ${emp.id || 'N/A'} | Login: ${emp.loginTime || 'N/A'}</p>
@@ -124,15 +148,15 @@ function renderCards(data) {
                             <td>${typeData.type || 'N/A'}</td>
                             <td>${typeData.scanned || 0}</td>
                             <td>${typeData.closed || 0}</td>
-                            <td>${typeData.rate || '0%'} %</td>
+                            <td>${typeData.rate || '0%'}</td>
                         </tr>
                     `).join('')}
                 </tbody>
             </table>
         `;
-        kpiResultContainer.appendChild(card);
-    });
-}
+            kpiResultContainer.appendChild(card);
+        });
+    }
 
     function getTasksColorClass(value) {
         const numValue = typeof value === 'string' ? parseFloat(value) : value;
@@ -169,7 +193,7 @@ function renderCards(data) {
     async function exportDashboardAsImage() {
         const reportElement = document.getElementById('report-content');
         if (!reportElement) return;
-        
+
         const button = document.getElementById('exportImageButton');
         button.textContent = 'กำลังสร้างรูปภาพ...';
         button.disabled = true;
@@ -192,7 +216,7 @@ function renderCards(data) {
             button.disabled = false;
         }
     }
-    
+
     async function getKpiData(cacheId) {
         try {
             const response = await fetch(WEB_APP_URL, {
@@ -210,7 +234,7 @@ function renderCards(data) {
             throw error;
         }
     }
-    
+
     // --- [ส่วนที่แก้ไข] ---
     // ปรับปรุงฟังก์ชันนี้ให้เรียบง่ายขึ้น
     async function initializeReport() {
@@ -228,7 +252,7 @@ function renderCards(data) {
             exportImageButton.textContent = 'กำลังโหลดข้อมูล...';
             exportImageButton.disabled = true;
         }
-        
+
         try {
             const reportData = await getKpiData(cacheId);
             console.log('Report Data received:', reportData);
@@ -236,17 +260,17 @@ function renderCards(data) {
             if (!reportData || !reportData.tableData || !reportData.summaryData) {
                 throw new Error('ข้อมูลที่ได้รับไม่สมบูรณ์');
             }
-            
+
             // ใช้ elements ที่มีอยู่แล้วในหน้า HTML ไม่ต้องสร้างใหม่
             const processTimeElement = document.getElementById('processTimeDisplay');
             if (processTimeElement) {
                 processTimeElement.textContent = `วันที่ประมวลผล: ${reportData.processTime || 'ไม่ระบุ'}`;
             }
-            
+
             // เรียก function แสดงผลข้อมูล
-            renderSummaryCards(reportData.summaryData); 
+            renderSummaryCards(reportData.summaryData);
             renderCards(reportData.tableData);
-            
+
             // เพิ่ม event listener ให้กับปุ่ม export (หากยังไม่มี)
             if (exportImageButton && !exportImageButton.onclick) {
                 exportImageButton.addEventListener('click', exportDashboardAsImage);
@@ -268,5 +292,3 @@ function renderCards(data) {
     // เริ่มต้นกระบวนการ
     initializeReport();
 });
-
-
