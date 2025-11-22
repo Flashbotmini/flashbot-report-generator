@@ -199,51 +199,101 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function exportDashboardAsImage() {
     const reportElement = document.getElementById('report-content');
-    if (!reportElement) return;
+    if (!reportElement) {
+        alert('ไม่พบ element');
+        return;
+    }
 
     const button = document.getElementById('exportImageButton');
     button.textContent = 'กำลังสร้างรูปภาพ...';
     button.disabled = true;
 
     try {
+        // รอให้ render เสร็จ
+        await new Promise(resolve => setTimeout(resolve, 300));
+
         const canvas = await html2canvas(reportElement, {
             scale: 2,
             useCORS: true,
-            backgroundColor: '#f8f9fa',
-            // เพิ่ม options เหล่านี้
             allowTaint: true,
-            foreignObjectRendering: false,
-            logging: true, // เปิด log เพื่อ debug
+            backgroundColor: '#f8f9fa',
+            windowWidth: reportElement.scrollWidth,
+            windowHeight: reportElement.scrollHeight,
+            x: 0,
+            y: 0,
             onclone: function(clonedDoc) {
-                // แปลง SVG เป็น Canvas ก่อน capture
-                const svgElements = clonedDoc.querySelectorAll('.gauge-svg');
-                svgElements.forEach(svg => {
-                    // ลบ animation และ transform ที่อาจทำให้เกิดปัญหา
-                    const progress = svg.querySelector('.gauge-progress');
-                    if (progress) {
-                        const currentOffset = progress.getAttribute('stroke-dashoffset');
-                        progress.style.transform = 'none';
-                        progress.setAttribute('transform', `rotate(-90 45 45)`);
+                // แก้ไข CSS ใน cloned document
+                const style = clonedDoc.createElement('style');
+                style.textContent = `
+                    /* Ranking Badge Colors */
+                    .ranking-badge.rank-1st {
+                        background: linear-gradient(135deg, #ffea7a, #FFA500) !important;
+                        border: 2px solid #FFD700 !important;
+                        animation: none !important;
                     }
-                });
-                
-                // หยุด animation ทั้งหมด
-                const animatedElements = clonedDoc.querySelectorAll('.rank-1st');
-                animatedElements.forEach(el => {
-                    el.style.animation = 'none';
-                });
+                    .ranking-badge.rank-2nd {
+                        background: linear-gradient(135deg, #e9e3e3, #A0A0A0) !important;
+                        border: 2px solid #C0C0C0 !important;
+                    }
+                    .ranking-badge.rank-3rd {
+                        background: linear-gradient(135deg, #ffc285, #B87333) !important;
+                        border: 2px solid #CD7F32 !important;
+                    }
+                    .ranking-badge.rank-other {
+                        background: linear-gradient(135deg, #bfb15a, #393208) !important;
+                        border: 2px solid #bfb15a !important;
+                    }
+                    
+                    /* Grade Card Borders */
+                    .employee-scorecard.grade-a { border: 5px solid #07801b !important; }
+                    .employee-scorecard.grade-b { border: 5px solid #3ee232 !important; }
+                    .employee-scorecard.grade-c { border: 5px solid #ffd600 !important; }
+                    .employee-scorecard.grade-d { border: 5px solid #f35430 !important; }
+                    .employee-scorecard.grade-f { border: 5px solid #f31212 !important; }
+                    
+                    /* Grade Badge Colors */
+                    .grade-badge.grade-a { background-color: #07801b !important; }
+                    .grade-badge.grade-b { background-color: #3ee232 !important; }
+                    .grade-badge.grade-c { background-color: #ffd600 !important; }
+                    .grade-badge.grade-d { background-color: #f35430 !important; }
+                    .grade-badge.grade-f { background-color: #f31212 !important; }
+                    
+                    /* SVG Gauge */
+                    .gauge-svg .gauge-background { stroke: #e9ecef !important; }
+                    
+                    /* Problem colors */
+                    .problem-value { color: #f31212 !important; }
+                    .tasks-add.tasks-green { color: #07801b !important; }
+                    .tasks-add.tasks-orange { color: #f35430 !important; }
+                    .tasks-add.tasks-yellow { color: #ffd600 !important; }
+                    .tasks-add.tasks-red { color: #f31212 !important; }
+                    
+                    /* Card styling */
+                    .employee-scorecard {
+                        background-color: #fff !important;
+                        box-shadow: 0 4px 15px -5px rgba(150, 170, 180, 0.5) !important;
+                    }
+                    
+                    /* Summary cards */
+                    .kpi-grid-container.courier-summary .kpi-card {
+                        background-color: #ffffff !important;
+                        border: 1px solid #e9ecef !important;
+                    }
+                    
+                    .problem-total { color: #f31212 !important; }
+                `;
+                clonedDoc.head.appendChild(style);
             }
         });
-        
+
         const link = document.createElement('a');
         link.download = `kpi_courier_scorecard_${new Date().toISOString().slice(0, 10)}.png`;
-        link.href = canvas.toDataURL("image/png", 1.0);
+        link.href = canvas.toDataURL('image/png', 1.0);
         link.click();
-        button.textContent = 'บันทึกเป็นรูปภาพสำเร็จ';
+        button.textContent = 'สำเร็จ!';
     } catch (err) {
-        console.error("Error creating image:", err);
-        button.textContent = 'บันทึกเป็นรูปภาพ';
-        alert('เกิดข้อผิดพลาด: ' + err.message);
+        console.error("Error:", err);
+        alert('Error: ' + err.message);
     } finally {
         setTimeout(() => {
             button.disabled = false;
@@ -327,6 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // เริ่มต้นกระบวนการ
     initializeReport();
 });
+
 
 
 
