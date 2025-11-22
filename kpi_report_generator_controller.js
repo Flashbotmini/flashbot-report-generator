@@ -30,27 +30,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function createGaugeSVG(percentage, color) {
-        const size = 90;
-        const strokeWidth = 10;
-        const center = size / 2;
-        const radius = center - strokeWidth / 2;
-        const circumference = 2 * Math.PI * radius;
-        const offset = circumference * (1 - (percentage / 100));
+    const size = 90;
+    const strokeWidth = 10;
+    const center = size / 2;
+    const radius = center - strokeWidth / 2;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference * (1 - (percentage / 100));
 
-        return `
-        <svg class="gauge-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-            <circle class="gauge-background" cx="${center}" cy="${center}" r="${radius}" stroke-width="${strokeWidth}"></circle>
-            <circle class="gauge-progress" cx="${center}" cy="${center}" r="${radius}" stroke-width="${strokeWidth}"
-                    stroke-dasharray="${circumference}"
-                    stroke-dashoffset="${offset}"
-                    style="stroke: ${color};">
-            </circle>
-            <text class="gauge-text" x="50%" y="50%" dy=".3em" text-anchor="middle" style="fill: ${color};">
-                ${percentage.toFixed(1)}%
-            </text>
-        </svg>
+    // ใช้ transform attribute แทน CSS transform
+    return `
+    <svg class="gauge-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+        <circle class="gauge-background" cx="${center}" cy="${center}" r="${radius}" 
+                stroke-width="${strokeWidth}" fill="none" stroke="#e9ecef"></circle>
+        <circle class="gauge-progress" cx="${center}" cy="${center}" r="${radius}" 
+                stroke-width="${strokeWidth}"
+                stroke-dasharray="${circumference}"
+                stroke-dashoffset="${offset}"
+                stroke="${color}"
+                fill="none"
+                stroke-linecap="round"
+                transform="rotate(-90 ${center} ${center})">
+        </circle>
+        <text class="gauge-text" x="50%" y="50%" dy=".3em" text-anchor="middle" 
+              fill="${color}" style="font-size: 22px; font-weight: 700;">
+            ${percentage.toFixed(1)}%
+        </text>
+    </svg>
     `;
-    }
+}
 
     // [NEW] ฟังก์ชันสร้าง Ranking Badge
     function createRankingBadge(ranking) {
@@ -320,5 +327,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // เริ่มต้นกระบวนการ
     initializeReport();
 });
+
 
 
