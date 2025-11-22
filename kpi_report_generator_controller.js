@@ -191,31 +191,59 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function exportDashboardAsImage() {
-        const reportElement = document.getElementById('report-content');
-        if (!reportElement) return;
+    const reportElement = document.getElementById('report-content');
+    if (!reportElement) return;
 
-        const button = document.getElementById('exportImageButton');
-        button.textContent = 'กำลังสร้างรูปภาพ...';
-        button.disabled = true;
+    const button = document.getElementById('exportImageButton');
+    button.textContent = 'กำลังสร้างรูปภาพ...';
+    button.disabled = true;
 
-        try {
-            const canvas = await html2canvas(reportElement, {
-                scale: 2,
-                useCORS: true,
-                backgroundColor: '#f8f9fa'
-            });
-            const link = document.createElement('a');
-            link.download = `kpi_courier_scorecard_${new Date().toISOString().slice(0, 10)}.png`;
-            link.href = canvas.toDataURL("image/png", 1.0);
-            link.click();
-            button.textContent = 'บันทึกเป็นรูปภาพสำเร็จ';
-        } catch (err) {
-            console.error("Error creating image:", err);
-            button.textContent = 'บันทึกเป็นรูปภาพ';
-        } finally {
+    try {
+        const canvas = await html2canvas(reportElement, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#f8f9fa',
+            // เพิ่ม options เหล่านี้
+            allowTaint: true,
+            foreignObjectRendering: false,
+            logging: true, // เปิด log เพื่อ debug
+            onclone: function(clonedDoc) {
+                // แปลง SVG เป็น Canvas ก่อน capture
+                const svgElements = clonedDoc.querySelectorAll('.gauge-svg');
+                svgElements.forEach(svg => {
+                    // ลบ animation และ transform ที่อาจทำให้เกิดปัญหา
+                    const progress = svg.querySelector('.gauge-progress');
+                    if (progress) {
+                        const currentOffset = progress.getAttribute('stroke-dashoffset');
+                        progress.style.transform = 'none';
+                        progress.setAttribute('transform', `rotate(-90 45 45)`);
+                    }
+                });
+                
+                // หยุด animation ทั้งหมด
+                const animatedElements = clonedDoc.querySelectorAll('.rank-1st');
+                animatedElements.forEach(el => {
+                    el.style.animation = 'none';
+                });
+            }
+        });
+        
+        const link = document.createElement('a');
+        link.download = `kpi_courier_scorecard_${new Date().toISOString().slice(0, 10)}.png`;
+        link.href = canvas.toDataURL("image/png", 1.0);
+        link.click();
+        button.textContent = 'บันทึกเป็นรูปภาพสำเร็จ';
+    } catch (err) {
+        console.error("Error creating image:", err);
+        button.textContent = 'บันทึกเป็นรูปภาพ';
+        alert('เกิดข้อผิดพลาด: ' + err.message);
+    } finally {
+        setTimeout(() => {
             button.disabled = false;
-        }
+            button.textContent = 'บันทึกเป็นรูปภาพ';
+        }, 2000);
     }
+}
 
     async function getKpiData(cacheId) {
         try {
@@ -292,4 +320,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // เริ่มต้นกระบวนการ
     initializeReport();
 });
+
 
